@@ -30,12 +30,11 @@ import kotlinx.coroutines.delay
 fun WhackAMoleGame() {
     val gridSize = 3
     var score by remember { mutableIntStateOf(0) }
-    var activeMole by remember { mutableIntStateOf(-1) } // Make activeMole mutable
+    var activeMole by remember { mutableIntStateOf(-1) }
 
-    // Coroutine to randomly activate a mole
     produceState<Unit>(Unit) {
         while (true) {
-            delay(1000L) // Moles appear every second
+            delay(1000L)
             activeMole = (0 until gridSize * gridSize).random()
         }
     }
