@@ -53,7 +53,7 @@ fun WhackAMoleGame(navController: NavController , gameMode: String) {
 
     //Mole appearing
     LaunchedEffect (Unit) {
-        while (true) {
+        while (true && timeRemaining != 0) {
             //mole appearing w delay
             delay(moleAppearanceDelay)
             //after delay mole muncul
@@ -112,6 +112,7 @@ fun WhackAMoleGame(navController: NavController , gameMode: String) {
         }
 
         if (isTimedMode && timeRemaining == 0) {
+            activeMole = -1 // Mole stop
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Game Over! Final Score: $score", color = Color.Red)
             //popbackstack is app screen rn is removed then muncul screen before
