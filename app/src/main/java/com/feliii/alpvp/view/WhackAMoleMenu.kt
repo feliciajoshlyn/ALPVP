@@ -1,5 +1,7 @@
 package com.feliii.alpvp.view
 
+import android.media.MediaPlayer
+import com.feliii.alpvp.R
 import android.widget.Space
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,15 +14,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun WhackAMoleMenu() {
+    val context = LocalContext.current
+    var isPlaying = remember { mutableStateOf(false) }
+    val song = remember { MediaPlayer.create(context, R.raw.lofi) }
+
     Column(
         modifier = Modifier.fillMaxSize().padding(horizontal = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -77,6 +88,18 @@ fun WhackAMoleMenu() {
                     Text(text = "Intense Mode")
                     Text(text = "0")
                 }
+            }
+            Button(
+                onClick = { isPlaying.value = !isPlaying.value; if (isPlaying.value) {
+                    song.start()
+                } else {
+                    song.pause()
+                }
+                    }
+                    ) {
+                Text(
+                    text = "play"
+                )
             }
         }
 
