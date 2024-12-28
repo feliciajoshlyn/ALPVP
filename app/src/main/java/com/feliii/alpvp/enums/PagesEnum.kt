@@ -4,4 +4,5 @@ enum class PagesEnum() {
     Login,
     Register,
     Home,
+    WhackAMoleMenu
 }
