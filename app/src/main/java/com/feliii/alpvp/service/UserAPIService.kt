@@ -10,6 +10,6 @@ interface UserAPIService {
     //header utk minta token
     //kirim token  untuk diproses lewat header
     fun logout(
-        @Header("X-API_TOKEN") token: String
+        @Header("X-API-TOKEN") token: String
     ): Call<GeneralResponseModel>
 }
