@@ -24,9 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.feliii.alpvp.uiStates.WAMDataStatusUIState
 import com.feliii.alpvp.viewmodel.WAMViewModel
 
 @Composable
@@ -41,78 +44,101 @@ fun WhackAMoleMenu(
     var isPlaying = remember { mutableStateOf(false) }
     val song = remember { MediaPlayer.create(context, R.raw.lofi) }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        // Text at the top
-        Text(
-            text = "Whack-A-Mole",
-            modifier = Modifier
-                .padding(top = 64.dp, bottom = 270.dp) // Adjust the padding for spacing from the top
-        )
-        // Buttons in the middle
+    val dataStatus = wamViewModel.dataStatus
+
+    when(dataStatus){
+        is WAMDataStatusUIState.Success ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
         ) {
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ },
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+            // Text at the top
+            Text(
+                text = "Whack-A-Mole",
+                modifier = Modifier
+                    .padding(
+                        top = 64.dp,
+                        bottom = 270.dp
+                    ) // Adjust the padding for spacing from the top
+            )
+            // Buttons in the middle
+            Column(
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    onClick = { /*TODO*/ },
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
-                    Text(text = "Timed Mode")
-                    Text(text = "0")
-                }
-            }
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ },
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = "Endless Mode")
-                    Text(text = "0")
-                }
-            }
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ },
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = "Intense Mode")
-                    Text(text = "0")
-                }
-            }
-            Button(
-                onClick = { isPlaying.value = !isPlaying.value; if (isPlaying.value) {
-                    song.start()
-                } else {
-                    song.pause()
-                }
-                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                Text(
-                    text = "play"
-                )
-            }
-        }
+                        Text(text = "Timed Mode")
+                        Text(text = dataStatus.data.timed_highscore.toString())
+                    }
+                }
 
-        Spacer(modifier = Modifier.weight(1f)) // Push content up from the bottom
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { /*TODO*/ },
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "Endless Mode")
+                        Text(text = dataStatus.data.endless_highscore.toString())
+                    }
+                }
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { /*TODO*/ },
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "Intense Mode")
+                        Text(text = dataStatus.data.intense_highscore.toString())
+                    }
+                }
+                Button(
+                    onClick = {
+                        isPlaying.value = !isPlaying.value; if (isPlaying.value) {
+                        song.start()
+                    } else {
+                        song.pause()
+                    }
+                    }
+                ) {
+                    Text(
+                        text = "play"
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f)) // Push content up from the bottom
+        }
+        else -> Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "No Data Found!",
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
 

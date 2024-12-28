@@ -30,7 +30,16 @@ class WAMViewModel (
     var dataStatus: WAMDataStatusUIState by mutableStateOf(WAMDataStatusUIState.Start)
         private set
 
-    fun getWAMData(token: String, navController: NavHostController, isUpdating: Boolean) {
+    var score by mutableStateOf(0)
+        private set
+
+    var isMole by mutableStateOf(false)
+        private set
+
+    var timed_highscore by mutableStateOf(0)
+        private set
+
+    fun getWAMData(token: String, navController: NavHostController) {
         viewModelScope.launch {
             dataStatus = WAMDataStatusUIState.Loading
 
@@ -71,6 +80,8 @@ class WAMViewModel (
             }
         }
     }
+
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
