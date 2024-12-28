@@ -13,6 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.view.WhackAMoleMenu
+import com.feliii.alpvp.viewmodel.WAMViewModel
+
 //import com.feliii.alpvp.view.login
 //import com.feliii.alpvp.view.register
 //import com.feliii.alpvp.viewmodel.AuthenticationViewModel
@@ -23,15 +26,16 @@ fun RelaxGameApp(
     navController: NavHostController = rememberNavController(),
 //    homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
 //    authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory)
+    wamViewModel: WAMViewModel = viewModel(factory = WAMViewModel.Factory),
 ){
     val localContext = LocalContext.current
 //    val token = homeViewModel.token.collectAsState()
 
-//    NavHost(navController = navController, startDestination = if(token.value != "Unknown" && token.value != ""){
-//        PagesEnum.Home.name
-//    } else {
-//        PagesEnum.Login.name
-//    }) {
+    NavHost(navController = navController, startDestination = if(token.value != "Unknown" && token.value != ""){
+        PagesEnum.Home.name
+    } else {
+        PagesEnum.Login.name
+    }) {
 //        composable(route = PagesEnum.Login.name) {
 //            login(
 //                modifier = Modifier
@@ -53,5 +57,17 @@ fun RelaxGameApp(
 //                context = localContext
 //            )
 //        }
+        composable(route = PagesEnum.WhackAMoleMenu.name) {
+            WhackAMoleMenu(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                navController = navController,
+                context = localContext,
+                wamViewModel = wamViewModel,
+                token = TODO()
+//                token = token.value
+            )
+        }
     }
-//}
+}

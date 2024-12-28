@@ -26,7 +26,13 @@ class MainActivity : ComponentActivity() {
 //                        modifier = Modifier.padding(innerPadding)
 //                    )
 //                }
-                WhackAMoleMenu()
+                WhackAMoleMenu(
+                    modifier = TODO(),
+                    wamViewModel = TODO(),
+                    navController = TODO(),
+                    token = TODO(),
+                    context = TODO()
+                )
             }
         }
     }

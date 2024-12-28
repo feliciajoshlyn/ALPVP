@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
+import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
 import com.feliii.alpvp.model.GetWAMResponse
@@ -45,6 +46,12 @@ class WAMViewModel (
                             dataStatus = WAMDataStatusUIState.Success(res.body()!!.data)
 
                             Log.d("get-wam-data", "GET WAM: ${res.body()}")
+
+                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
+                                popUpTo(PagesEnum.Home.name) {
+                                    inclusive = true
+                                }
+                            }
                         }else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
@@ -68,7 +75,7 @@ class WAMViewModel (
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as WAMApplication)
+                val application = (this[APPLICATION_KEY] as RelaxGameApplication)
                 val wamRepository = application.container.wamRepository
                 WAMViewModel(wamRepository)
             }

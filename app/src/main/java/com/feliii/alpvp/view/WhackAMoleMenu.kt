@@ -1,5 +1,6 @@
 package com.feliii.alpvp.view
 
+import android.content.Context
 import android.media.MediaPlayer
 import com.feliii.alpvp.R
 import android.widget.Space
@@ -25,9 +26,17 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.feliii.alpvp.viewmodel.WAMViewModel
 
 @Composable
-fun WhackAMoleMenu() {
+fun WhackAMoleMenu(
+    modifier: Modifier = Modifier,
+    wamViewModel: WAMViewModel,
+    navController: NavHostController,
+    token: String,
+    context: Context
+) {
     val context = LocalContext.current
     var isPlaying = remember { mutableStateOf(false) }
     val song = remember { MediaPlayer.create(context, R.raw.lofi) }
@@ -113,5 +122,11 @@ fun WhackAMoleMenu() {
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 fun WhackAMoleMenuPreview() {
-    WhackAMoleMenu()
+    WhackAMoleMenu(
+        modifier = TODO(),
+        wamViewModel = TODO(),
+        navController = TODO(),
+        token = TODO(),
+        context = TODO()
+    )
 }
