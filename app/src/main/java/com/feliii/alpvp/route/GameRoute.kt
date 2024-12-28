@@ -1,4 +1,4 @@
-package com.feliii.alpvp.view
+package com.feliii.alpvp.route
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,6 +13,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.view.login
+import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
 
