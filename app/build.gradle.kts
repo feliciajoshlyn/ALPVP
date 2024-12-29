@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    // dependencies tambahan
+// dependencies tambahan
     implementation("androidx.datastore:datastore-preferences:1.0.0") //untuk persist data
     implementation("com.squareup.retrofit2:retrofit:2.11.0") // untuk request ke backend
     implementation("com.squareup.retrofit2:converter-gson:2.11.0") //untuk convert json

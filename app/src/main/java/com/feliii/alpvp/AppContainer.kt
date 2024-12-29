@@ -2,15 +2,12 @@ package com.feliii.alpvp
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.feliii.alpvp.repository.NetworkWAMRepository
-//import com.feliii.alpvp.repository.AuthenticationRepository
-//import com.feliii.alpvp.repository.UserRepository
-//import com.feliii.alpvp.repository.NetworkAuthenticationRepository
-//import com.feliii.alpvp.repository.NetworkUserRepository
-import com.feliii.alpvp.repository.WAMRepository
-import com.feliii.alpvp.service.WAMAPIService
-//import com.feliii.alpvp.service.AuthenticationAPIService
-//import com.feliii.alpvp.service.UserAPIService
+import com.feliii.alpvp.repository.AuthenticationRepository
+import com.feliii.alpvp.repository.UserRepository
+import com.feliii.alpvp.repository.NetworkAuthenticationRepository
+import com.feliii.alpvp.repository.NetworkUserRepository
+import com.feliii.alpvp.service.AuthenticationAPIService
+import com.feliii.alpvp.service.UserAPIService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,39 +15,39 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 //container is for bengun service, tiap service & repo baru didaftarin di sini
 interface AppContainer {
-//    val authenticationRepository: AuthenticationRepository
-//    val userRepository: UserRepository
+    val authenticationRepository: AuthenticationRepository
+    val userRepository: UserRepository
     val wamRepository: WAMRepository
 }
 
 class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : AppContainer {
     private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
 
-//    private val authenticationRetrofitService: AuthenticationAPIService by lazy {
-//        val retrofit = initRetrofit()
-//
-//        retrofit.create(AuthenticationAPIService::class.java)
-//    }
-//
-//    private val userRetrofitService: UserAPIService by lazy {
-//        val retrofit = initRetrofit()
-//
-//        retrofit.create(UserAPIService::class.java)
-//    }
+    private val authenticationRetrofitService: AuthenticationAPIService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(AuthenticationAPIService::class.java)
+    }
+
+    private val userRetrofitService: UserAPIService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(UserAPIService::class.java)
+    }
 
     private val wamRetrofitService: WAMAPIService by lazy {
         val retrofit = initRetrofit()
 
         retrofit.create(WAMAPIService::class.java)
     }
-//
-//    override val authenticationRepository: AuthenticationRepository by lazy {
-//        NetworkAuthenticationRepository(authenticationRetrofitService)
-//    }
-//
-//    override val userRepository: UserRepository by lazy {
-//        NetworkUserRepository(userDataStore, userRetrofitService)
-//    }
+
+    override val authenticationRepository: AuthenticationRepository by lazy {
+        NetworkAuthenticationRepository(authenticationRetrofitService)
+    }
+
+    override val userRepository: UserRepository by lazy {
+        NetworkUserRepository(userDataStore, userRetrofitService)
+    }
     override val wamRepository: WAMRepository by lazy {
         NetworkWAMRepository(wamRetrofitService)
     }
@@ -72,6 +69,4 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
             .baseUrl(APIBaseURL)
             .build()
     }
-
-
 }
