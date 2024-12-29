@@ -1,6 +1,7 @@
 package com.feliii.alpvp.view
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,50 +27,58 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.feliii.alpvp.viewmodel.WAMViewModel
 import kotlinx.coroutines.delay
 
 @SuppressLint("ProduceStateDoesNotAssignValue")
 @Composable
-fun WhackAMoleGame(navController: NavController , gameMode: String) {
-    var score by remember { mutableIntStateOf(0) }
-    var activeMole by remember { mutableIntStateOf(-1) }
-    var timeRemaining by remember { mutableIntStateOf(30) }
+fun WhackAMoleGame(
+    navController: NavHostController ,
+    modifier: Modifier = Modifier,
+    context: Context,
+    token: String,
+    wamViewModel: WAMViewModel,
+    gameMode: String
+) {
 
-    //gridsize 4x4 for intense
-    val gridSize = when (gameMode) {
-        "intense" -> 4
-        else -> 3
-    }
+//    //gridsize 4x4 for intense
+//    val gridSize = when (gameMode) {
+//        "intense" -> 4
+//        else -> 3
+//    }
 
-    //waktu lebih cepat untuk intense
-    val moleAppearanceDelay = when (gameMode) {
-        "intense" -> 500L
-        else -> 1000L
-    }
+//    //waktu lebih cepat untuk intense
+//    val moleAppearanceDelay = when (gameMode) {
+//        "intense" -> 500L
+//        else -> 1000L
+//    }
 
-    //check if it's timed(/intense)
-    val isTimedMode = gameMode in listOf("timed", "intense") // Check if the mode is timed
+//    //check if it's timed(/intense)
+//    val isTimedMode = gameMode in listOf("timed", "intense") // Check if the mode is timed
 
-    //Mole appearing
-    LaunchedEffect (Unit) {
-        while (true && timeRemaining != 0) {
-            //mole appearing w delay
-            delay(moleAppearanceDelay)
-            //after delay mole muncul
-            activeMole = (0 until gridSize * gridSize).random()
-        }
-    }
+    LaunchedEffect(Unit) {wamViewModel.startGame()}
 
-    //countdown (use int then delay 1000ms)
-    LaunchedEffect(isTimedMode) {
-        if (isTimedMode) {
-            while (timeRemaining > 0) {
-                delay(1000L)
-                timeRemaining--
-            }
-        }
-    }
+//    //Mole appearing
+//    LaunchedEffect (Unit) {
+//        while (true && timeRemaining != 0) {
+//            //mole appearing w delay
+//            delay(wamViewModel.moleAppearanceDelay)
+//            //after delay mole muncul
+//            activeMole = (0 until gridSize * gridSize).random()
+//        }
+//    }
+//
+//    //countdown (use int then delay 1000ms)
+//    LaunchedEffect(isTimedMode) {
+//        if (isTimedMode) {
+//            while (timeRemaining > 0) {
+//                delay(1000L)
+//                timeRemaining--
+//            }
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -78,32 +87,28 @@ fun WhackAMoleGame(navController: NavController , gameMode: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Display game information
-        Text(text = "Mode: ${gameMode.capitalize()}")
-        Text(text = "Score: $score")
-        if (isTimedMode) {
-            Text(text = "Time Remaining: $timeRemaining")
+        Text(text = "Mode: ${wamViewModel.mode}")
+        Text(text = "Score: ${wamViewModel.score}")
+        if (wamViewModel.isTimedMode) {
+            Text(text = "Time Remaining: ${wamViewModel.timeRemaining}")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Game grid
         LazyVerticalGrid(
-            columns = GridCells.Fixed(gridSize),
+            columns = wamViewModel.gridCells,
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
-            items(gridSize * gridSize) { index ->
-                val isMole = index == activeMole
+            items(wamViewModel.gridSize * wamViewModel.gridSize) { index ->
+//                val isMole = index == activeMole
                 Button(
-                    onClick = {
-                        if (isMole) {
-                            score++
-                        }
-                    },
+                    onClick = { wamViewModel.onMoleClick(index) },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isMole) Color.Green else Color.Gray
+                        containerColor = if (wamViewModel.isMoleAtIndex(index)) Color.Green else Color.Gray
                     ),
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -111,10 +116,19 @@ fun WhackAMoleGame(navController: NavController , gameMode: String) {
             }
         }
 
-        if (isTimedMode && timeRemaining == 0) {
-            activeMole = -1 // Mole stop
+        if(!wamViewModel.isTimedMode){
+            Button(
+                onClick = { wamViewModel.gameOver() },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(text = "Stop Game")
+            }
+        }
+
+        if (wamViewModel.gameIsOver) {
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Game Over! Final Score: $score", color = Color.Red)
+            Text(text = "Game Over! Final Score: ${wamViewModel.score}", color = Color.Red)
+            Text(text = "Highscore: ${wamViewModel.highscore}")
             //popbackstack is app screen rn is removed then muncul screen before
             Button(onClick = { navController.popBackStack() }) {
                 Text(text = "Return to Menu")
@@ -126,5 +140,5 @@ fun WhackAMoleGame(navController: NavController , gameMode: String) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun WhackAMoleViewPreview() {
-    WhackAMoleGame( navController = rememberNavController(), gameMode = "intense" )
+    WhackAMoleGame( navController = rememberNavController(), gameMode = "endless", wamViewModel = WAMViewModel(TODO()), context = TODO(), token = TODO())
 }

@@ -71,7 +71,7 @@ fun WhackAMoleMenu(
             ) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { /*TODO*/ },
+                    onClick = { wamViewModel.navigateToGame(navController, "timed", dataStatus.data) },
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
                     Row(
@@ -85,7 +85,7 @@ fun WhackAMoleMenu(
 
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { /*TODO*/ },
+                    onClick = {wamViewModel.navigateToGame(navController, "endless", dataStatus.data)},
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
                     Row(
@@ -99,7 +99,7 @@ fun WhackAMoleMenu(
 
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { /*TODO*/ },
+                    onClick = {wamViewModel.navigateToGame(navController, "intense", dataStatus.data)},
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
                     Row(
