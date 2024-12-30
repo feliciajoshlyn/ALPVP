@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
+import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.repository.UserRepository
 import com.feliii.alpvp.uiStates.HomeUIState
 import com.feliii.alpvp.uiStates.StringDataStatusUIState

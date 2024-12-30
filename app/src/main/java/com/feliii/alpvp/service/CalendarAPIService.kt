@@ -1,6 +1,7 @@
 package com.feliii.alpvp.service
 
 import com.feliii.alpvp.model.CalendarRequest
+import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.model.GetAllCalendarResponses
 import com.feliii.alpvp.model.GetCalendarResponse
 import retrofit2.Call

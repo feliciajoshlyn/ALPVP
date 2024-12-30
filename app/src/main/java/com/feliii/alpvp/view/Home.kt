@@ -24,7 +24,6 @@ fun mainMenu(
 ){
     Button(
         onClick = {wamViewModel.getWAMData(token = token, navController = navController)},
-        modifier = modifier
     ) {
         Text(
             text = "whack a mole menu"

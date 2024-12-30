@@ -99,14 +99,13 @@ fun WhackAMoleGame(
 
         // Game grid
         LazyVerticalGrid(
-            columns = wamViewModel.gridCells,
+            columns = GridCells.Fixed(wamViewModel.gridSize),
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
             items(wamViewModel.gridSize * wamViewModel.gridSize) { index ->
-//                val isMole = index == activeMole
                 Button(
                     onClick = { wamViewModel.onMoleClick(index) },
                     colors = ButtonDefaults.buttonColors(
@@ -131,6 +130,9 @@ fun WhackAMoleGame(
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Game Over! Final Score: ${wamViewModel.score}", color = Color.Red)
             Text(text = "Highscore: ${wamViewModel.highscore}")
+            Text(text = "Mode: ${wamViewModel.timed_highscore}")
+            Text(text = "Mode: ${wamViewModel.endless_highscore}")
+            Text(text = "Mode: ${wamViewModel.intense_highscore}")
             //popbackstack is app screen rn is removed then muncul screen before
             Button(onClick = { wamViewModel.backToMenu(token, navController, {wamViewModel.getWAMData(token, navController)}) }) {
                 Text(text = "Return to Menu")

@@ -189,13 +189,17 @@ class WAMViewModel (
         score = 0
         mole_chosen = wamMode.mole_chosen
         song_chosen = wamMode.song_chosen
-
+        timed_highscore = wamMode.timed_highscore
+        endless_highscore = wamMode.endless_highscore
+        intense_highscore = wamMode.intense_highscore
 
         if(gameMode == "timed"){
             highscore = wamMode.timed_highscore
             isTimedMode = true
+            gridSize = 3
         }else if(gameMode == "endless"){
             highscore = wamMode.endless_highscore
+            gridSize = 3
         }else if(gameMode == "intense"){
             highscore = wamMode.intense_highscore
             moleAppearanceDelay = 500L
@@ -255,6 +259,10 @@ class WAMViewModel (
 
     fun gameOver(){
         stopGame()
+        score = 0
+        timeRemaining = 30 // Or whatever the starting value is for time
+        activeMole = -1
+
         if(score > highscore){
             highscore = score
             if(mode.equals("timed")){
@@ -271,8 +279,8 @@ class WAMViewModel (
     }
 
     fun backToMenu(token: String, navController: NavHostController, getWAM: () -> Unit){
-        updateWAMData(token, getWAM)
         gameIsOver = false
+        updateWAMData(token, getWAM)
         navController.navigate(PagesEnum.WhackAMoleMenu.name) {
             popUpTo(PagesEnum.WhackAMoleGame.name) {
                 inclusive = true
