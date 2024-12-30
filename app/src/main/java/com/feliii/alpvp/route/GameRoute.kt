@@ -13,10 +13,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.view.WhackAMoleGame
 import com.feliii.alpvp.view.WhackAMoleMenu
 import com.feliii.alpvp.viewmodel.WAMViewModel
 
 import com.feliii.alpvp.view.login
+import com.feliii.alpvp.view.mainMenu
 import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
@@ -25,11 +27,12 @@ import com.feliii.alpvp.viewmodel.HomeViewModel
 fun RelaxGameApp(
     navController: NavHostController = rememberNavController(),
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-    authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory)
+    authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory),
     wamViewModel: WAMViewModel = viewModel(factory = WAMViewModel.Factory),
 ){
     val localContext = LocalContext.current
     val token = homeViewModel.token.collectAsState()
+    val username = homeViewModel.username.collectAsState()
 
     NavHost(navController = navController, startDestination = if(token.value != "Unknown" && token.value != ""){
         PagesEnum.Home.name
@@ -57,6 +60,19 @@ fun RelaxGameApp(
                 context = localContext
             )
         }
+
+        composable(route = PagesEnum.Home.name) {
+            mainMenu(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                wamViewModel = wamViewModel,
+                navController = navController,
+                context = localContext,
+                token = token.value,
+                username = username.value
+            )
+        }
         composable(route = PagesEnum.WhackAMoleMenu.name) {
             WhackAMoleMenu(
                 modifier = Modifier
@@ -66,6 +82,18 @@ fun RelaxGameApp(
                 context = localContext,
                 wamViewModel = wamViewModel,
                 token = token.value
+            )
+        }
+        composable(route = PagesEnum.WhackAMoleGame.name) {
+            WhackAMoleGame(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                navController = navController,
+                context = localContext,
+                wamViewModel = wamViewModel,
+                token = token.value,
+                gameMode = ""
             )
         }
     }

@@ -12,13 +12,13 @@ import retrofit2.Call
 
 //repository buat isi function cz in service itu cuma declare
 interface UserRepository {
-    val currentUserToken: Flow<String>
     val currentUsername: Flow<String>
+    val currentUserToken: Flow<String>
 
     fun logout(token: String): Call<GeneralResponseModel>
 
-    suspend fun saveUserToken(token: String)
     suspend fun saveUsername(username: String)
+    suspend fun saveUserToken(token: String)
 }
 
 class NetworkUserRepository(
@@ -27,7 +27,7 @@ class NetworkUserRepository(
 ): UserRepository {
     private companion object {
         val USERNAME = stringPreferencesKey("username")
-        val USER_TOKEN = stringPreferencesKey("user_token")
+        val USER_TOKEN = stringPreferencesKey("token")
     }
 
     override val currentUsername: Flow<String> = userDataStore.data.map { preferences ->

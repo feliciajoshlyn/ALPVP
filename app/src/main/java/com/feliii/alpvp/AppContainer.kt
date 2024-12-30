@@ -6,8 +6,11 @@ import com.feliii.alpvp.repository.AuthenticationRepository
 import com.feliii.alpvp.repository.UserRepository
 import com.feliii.alpvp.repository.NetworkAuthenticationRepository
 import com.feliii.alpvp.repository.NetworkUserRepository
+import com.feliii.alpvp.repository.NetworkWAMRepository
+import com.feliii.alpvp.repository.WAMRepository
 import com.feliii.alpvp.service.AuthenticationAPIService
 import com.feliii.alpvp.service.UserAPIService
+import com.feliii.alpvp.service.WAMAPIService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

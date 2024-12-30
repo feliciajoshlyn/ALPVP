@@ -119,7 +119,7 @@ class AuthenticationViewModel (
                         if(res.isSuccessful){
                             Log.d("response-data", "RESPONSE DATA: ${res.body()}")
 
-                            saveUsernameToken(res.body()!!.data.token!!, res.body()!!.data.username)
+                            saveUsernameToken(res.body()!!.data.username, res.body()!!.data.token!!)
                             dataStatus = AuthenticationStatusUIState.Success(res.body()!!.data)
 
                             resetViewModel()
@@ -168,7 +168,7 @@ class AuthenticationViewModel (
                         res: Response<UserResponse>
                     ) {
                         if (res.isSuccessful) {
-                            saveUsernameToken(res.body()!!.data.token!!, res.body()!!.data.username)
+                            saveUsernameToken(res.body()!!.data.username, res.body()!!.data.token!!)
 
                             dataStatus = AuthenticationStatusUIState.Success(res.body()!!.data)
 

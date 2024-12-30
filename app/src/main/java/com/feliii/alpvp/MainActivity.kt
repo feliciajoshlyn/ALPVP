@@ -24,15 +24,15 @@ class MainActivity : ComponentActivity() {
 //                        modifier = Modifier.padding(innerPadding)
 //                    )
 //                }
-                WhackAMoleMenu(
-                    modifier = TODO(),
-                    wamViewModel = TODO(),
-                    navController = TODO(),
-                    token = TODO(),
-                    context = TODO()
-                )
+//                WhackAMoleMenu(
+//                    modifier = TODO(),
+//                    wamViewModel = TODO(),
+//                    navController = TODO(),
+//                    token = TODO(),
+//                    context = TODO()
+//                )
                 // TODO: add routers here
-//                RelaxGameApp()
+                RelaxGameApp()
             }
         }
     }

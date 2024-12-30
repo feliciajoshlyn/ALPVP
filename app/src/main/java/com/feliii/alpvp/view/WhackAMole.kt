@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.viewmodel.WAMViewModel
 import kotlinx.coroutines.delay
 
@@ -98,7 +100,7 @@ fun WhackAMoleGame(
         // Game grid
         LazyVerticalGrid(
             columns = wamViewModel.gridCells,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
@@ -116,7 +118,7 @@ fun WhackAMoleGame(
             }
         }
 
-        if(!wamViewModel.isTimedMode){
+        if(wamViewModel.isTimedMode == false){
             Button(
                 onClick = { wamViewModel.gameOver() },
                 modifier = Modifier.padding(top = 16.dp)
@@ -130,7 +132,7 @@ fun WhackAMoleGame(
             Text(text = "Game Over! Final Score: ${wamViewModel.score}", color = Color.Red)
             Text(text = "Highscore: ${wamViewModel.highscore}")
             //popbackstack is app screen rn is removed then muncul screen before
-            Button(onClick = { navController.popBackStack() }) {
+            Button(onClick = { navController.popBackStack(route = PagesEnum.WhackAMoleMenu.name, inclusive = true)}) {
                 Text(text = "Return to Menu")
             }
         }

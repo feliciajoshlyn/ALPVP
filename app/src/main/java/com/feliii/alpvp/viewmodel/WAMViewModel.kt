@@ -63,7 +63,9 @@ class WAMViewModel (
     var gridCells by mutableStateOf(GridCells.Fixed(gridSize))
         private set
 
-    val isTimedMode = mode in listOf("timed", "intense")
+    var isTimedMode by mutableStateOf(false)
+        private set
+//    val isTimedMode = mode in listOf("timed", "intense")
 
     var gameIsOver by mutableStateOf(false)
         private set
@@ -128,12 +130,14 @@ class WAMViewModel (
         score = 0
         if(gameMode == "timed"){
             highscore = wamMode.timed_highscore
+            isTimedMode = true
         }else if(gameMode == "endless"){
             highscore = wamMode.endless_highscore
         }else if(gameMode == "intense"){
             highscore = wamMode.intense_highscore
             moleAppearanceDelay = 500L
             gridSize = 4
+            isTimedMode = true
         }
 
         navContoller.navigate(PagesEnum.WhackAMoleGame.name) {
