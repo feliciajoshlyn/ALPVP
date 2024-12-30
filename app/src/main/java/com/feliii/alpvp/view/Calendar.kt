@@ -153,16 +153,23 @@ fun DynamicMoodCalendar() {
                     }
                 }
             }
+        }
 
-            // Add Emotion Button
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .background(Color.White, shape = CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null, tint = Color(0xFF9370DB))
-            }
+        // Add Emotion Button
+        Box(
+            modifier = Modifier
+                .offset(y = -20.dp)
+                .size(76.dp)
+                .background(Color.White, shape = CircleShape)
+                .align(Alignment.BottomEnd),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = null,
+                tint = Color(0xFF9370DB),
+                modifier = Modifier.size(36.dp)
+            )
         }
     }
 }
