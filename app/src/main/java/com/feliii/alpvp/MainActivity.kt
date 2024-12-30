@@ -4,14 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.feliii.alpvp.ui.theme.ALPVPTheme
+import com.feliii.alpvp.view.WhackAMoleMenu
+import com.feliii.alpvp.route.RelaxGameApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,12 +18,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ALPVPTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//                    Greeting(
+//                        name = "Android",
+//                        modifier = Modifier.padding(innerPadding)
+//                    )
+//                }
+//                WhackAMoleMenu(
+//                    modifier = TODO(),
+//                    wamViewModel = TODO(),
+//                    navController = TODO(),
+//                    token = TODO(),
+//                    context = TODO()
+//                )
+                // TODO: add routers here
+                RelaxGameApp()
             }
         }
     }
