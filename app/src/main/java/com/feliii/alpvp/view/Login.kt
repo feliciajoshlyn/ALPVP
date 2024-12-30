@@ -18,10 +18,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -75,11 +79,11 @@ fun login(
     ){
         Text(
             text = "Login",
-            fontSize = 40.sp,
+            fontSize = 52.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFFD7C4EC),
             fontFamily = FontFamily(Font(R.font.jua)),
-            modifier = Modifier.padding(bottom = 20.dp)
+            modifier = Modifier.padding(bottom = 32.dp)
         )
         Box(
             modifier = Modifier
@@ -97,17 +101,25 @@ fun login(
                     onValueChange = {
                         authenticationViewModel.changeUsernameInput(it)
                         authenticationViewModel.checkLoginForm()
-                                    },
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0XFFF6EDFF),
+                        unfocusedContainerColor = Color(0XFFFAF4FF),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
                     label ={
                         Text(
                             text = "Username",
+                            color = Color(0xFF5445AC),
                             fontFamily = FontFamily(Font(R.font.jua)),
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                    modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
+
                 TextField(
                     leadingIcon = {
                         Icon(Icons.Default.Lock, contentDescription = "password")
@@ -117,39 +129,61 @@ fun login(
                     label ={
                         Text(
                             text = "Password",
+                            color = Color(0xFF5445AC),
                             fontFamily = FontFamily(Font(R.font.jua)),
                         )
                     },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0XFFF6EDFF),
+                        unfocusedContainerColor = Color(0XFFFAF4FF),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    visualTransformation = loginUIState.passwordVisibility
+                    visualTransformation = loginUIState.passwordVisibility,
+                    modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.padding(4.dp))
+
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                 ){
                     Text(
                         text = "Don't have an account yet? ",
                         fontWeight = FontWeight.Normal,
-                        color = Color.Gray,
+                        fontFamily = FontFamily(Font(R.font.jua)),
+                        color = Color(0xFF5445AC),
+                        fontSize = 14.sp
                     )
                     ClickableText (
                         text = AnnotatedString("Register"),
                         onClick = {
                             // Handle the click and navigate to the register page
-                            // For example, call your navigation function here
+
                         },
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = Color(0xFF0066CC), // Blue color for the "Register" link
-                            fontWeight = FontWeight.Bold
+                            color = Color(0xFF0066CC),
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                            fontSize = 14.sp
                         ),
                     )
                 }
 
                 Button(
                     onClick = { authenticationViewModel.loginUser(navController = navController) },
-                    modifier = Modifier.padding(top = 16.dp)
-                        .fillMaxWidth()
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF9141E6),
+                        disabledContainerColor = Color.Gray, // Background color when disabled
+                        disabledContentColor = Color.LightGray // Text/Icon color when disabled
+                    ),
+                    modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
                 ) {
-                    Text(text = "Login")
+                    Text(
+                        text = "Login",
+                        fontFamily = FontFamily(Font(R.font.jua)),
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
