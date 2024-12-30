@@ -1,6 +1,6 @@
 package com.feliii.alpvp.uiStates
 
-class StringDataStatusUIStatesealed interface StringDataStatusUIState {
+sealed interface StringDataStatusUIState {
 //sealed interface StringDataStatusUIState {
     data class Success(val data: String): StringDataStatusUIState
     object Start: StringDataStatusUIState

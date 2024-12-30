@@ -9,7 +9,7 @@ import retrofit2.Call
 interface WAMRepository {
     fun getWAMData(token: String): Call<GetWAMResponse>
 
-    fun updateWAMData(token: String, mole_chosen: String, song_chosen: String, timed_highscore: Int, endless_highscore: Int, intense_highscore: Int): Call<GeneralResponseModel>
+    suspend fun updateWAMData(token: String, mole_chosen: String, song_chosen: String, timed_highscore: Int, endless_highscore: Int, intense_highscore: Int): Call<GeneralResponseModel>
 }
 
 class NetworkWAMRepository(
@@ -19,7 +19,7 @@ class NetworkWAMRepository(
         return wamAPIService.getWAMData(token)
     }
 
-    override fun updateWAMData(
+    override suspend fun updateWAMData(
         token: String,
         mole_chosen: String,
         song_chosen: String,

@@ -118,7 +118,7 @@ fun WhackAMoleGame(
             }
         }
 
-        if(wamViewModel.isTimedMode == false){
+        if(!wamViewModel.isTimedMode){
             Button(
                 onClick = { wamViewModel.gameOver() },
                 modifier = Modifier.padding(top = 16.dp)
@@ -132,7 +132,7 @@ fun WhackAMoleGame(
             Text(text = "Game Over! Final Score: ${wamViewModel.score}", color = Color.Red)
             Text(text = "Highscore: ${wamViewModel.highscore}")
             //popbackstack is app screen rn is removed then muncul screen before
-            Button(onClick = { navController.popBackStack(route = PagesEnum.WhackAMoleMenu.name, inclusive = true)}) {
+            Button(onClick = { wamViewModel.backToMenu(token, navController, {wamViewModel.getWAMData(token, navController)}) }) {
                 Text(text = "Return to Menu")
             }
         }

@@ -15,5 +15,5 @@ interface WAMAPIService {
     fun getWAMData(@Header("X-API-TOKEN") token: String): Call<GetWAMResponse>
 
     @PUT("api/wam")
-    fun updateWAMData(@Header("X-API-TOKEN") token: String, @Body WhackAMoleModel: WhackAMoleRequest ): Call<GeneralResponseModel>
+    fun updateWAMData(@Header("X-API-TOKEN") token: String, @Body wamModel: WhackAMoleRequest ): Call<GeneralResponseModel>
 }

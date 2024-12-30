@@ -22,5 +22,5 @@ data class WhackAMoleRequest(
     val song_chosen: String = "",
     val timed_highscore: Int = 0,
     val endless_highscore: Int = 0,
-    val intense_highscore: Int,
+    val intense_highscore: Int = 0,
 )

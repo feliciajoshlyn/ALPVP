@@ -12,12 +12,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
+import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
 import com.feliii.alpvp.model.GetWAMResponse
 import com.feliii.alpvp.model.WhackAMoleModel
 import com.feliii.alpvp.repository.WAMRepository
+import com.feliii.alpvp.uiStates.StringDataStatusUIState
 import com.feliii.alpvp.uiStates.WAMDataStatusUIState
 import com.google.gson.Gson
 import kotlinx.coroutines.Job
@@ -41,7 +43,19 @@ class WAMViewModel (
     var score by mutableStateOf(0)
         private set
 
-    var isMole by mutableStateOf(false)
+    var mole_chosen by mutableStateOf("")
+        private set
+
+    var song_chosen by mutableStateOf("")
+        private set
+
+    var timed_highscore by mutableStateOf(0)
+        private set
+
+    var endless_highscore by mutableStateOf(0)
+        private set
+
+    var intense_highscore by mutableStateOf(0)
         private set
 
     var highscore by mutableStateOf(0)
@@ -65,9 +79,11 @@ class WAMViewModel (
 
     var isTimedMode by mutableStateOf(false)
         private set
-//    val isTimedMode = mode in listOf("timed", "intense")
 
     var gameIsOver by mutableStateOf(false)
+        private set
+
+    var submissionStatus: StringDataStatusUIState by mutableStateOf(StringDataStatusUIState.Start)
         private set
 
     private var moleGenerationJob: Job? = null
@@ -115,6 +131,49 @@ class WAMViewModel (
         }
     }
 
+    fun updateWAMData(token: String, getWAM: () -> Unit) {
+        viewModelScope.launch {
+            submissionStatus = StringDataStatusUIState.Loading
+
+            try {
+                val call = wamRepository.updateWAMData(token, mole_chosen, song_chosen, timed_highscore, endless_highscore, intense_highscore)
+
+                call.enqueue(object : Callback<GeneralResponseModel> {
+                    override fun onResponse(
+                        call: Call<GeneralResponseModel>,
+                        res: Response<GeneralResponseModel>
+                    ) {
+                        if (res.isSuccessful) {
+                            submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
+
+                            getWAM()
+
+//                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
+//                                popUpTo(PagesEnum.WhackAMoleMenu.name) {
+//                                    inclusive = true
+//                                }
+//                            }
+
+                        } else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GeneralResponseModel?>, t: Throwable) {
+                        submissionStatus = StringDataStatusUIState.Failed(t.localizedMessage)
+                    }
+                })
+            } catch (error: IOException) {
+                submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+            }
+        }
+    }
+
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -128,6 +187,10 @@ class WAMViewModel (
     fun navigateToGame(navContoller: NavHostController, gameMode: String, wamMode: WhackAMoleModel){
         mode = gameMode
         score = 0
+        mole_chosen = wamMode.mole_chosen
+        song_chosen = wamMode.song_chosen
+
+
         if(gameMode == "timed"){
             highscore = wamMode.timed_highscore
             isTimedMode = true
@@ -146,6 +209,7 @@ class WAMViewModel (
             }
         }
     }
+
 
     fun startGame(){
         stopGame()
@@ -193,8 +257,27 @@ class WAMViewModel (
         stopGame()
         if(score > highscore){
             highscore = score
+            if(mode.equals("timed")){
+                timed_highscore = highscore
+            }else if(mode.equals("endless")){
+                endless_highscore = highscore
+            }else if(mode.equals("intense")){
+                intense_highscore = highscore
+            }
         }
+
+
         gameIsOver = true
+    }
+
+    fun backToMenu(token: String, navController: NavHostController, getWAM: () -> Unit){
+        updateWAMData(token, getWAM)
+        gameIsOver = false
+        navController.navigate(PagesEnum.WhackAMoleMenu.name) {
+            popUpTo(PagesEnum.WhackAMoleGame.name) {
+                inclusive = true
+            }
+        }
     }
 
     override fun onCleared() {
