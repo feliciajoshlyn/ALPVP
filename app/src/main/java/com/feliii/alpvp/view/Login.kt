@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -35,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -44,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.feliii.alpvp.R
 import com.feliii.alpvp.uiStates.AuthenticationStatusUIState
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 
@@ -71,10 +75,11 @@ fun login(
     ){
         Text(
             text = "Login",
-            fontSize = 24.sp,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFFD7C4EC),
-            modifier = Modifier.padding(bottom = 16.dp)
+            fontFamily = FontFamily(Font(R.font.jua)),
+            modifier = Modifier.padding(bottom = 20.dp)
         )
         Box(
             modifier = Modifier
@@ -85,7 +90,6 @@ fun login(
                 modifier = Modifier.padding(20.dp)
             ){
                 TextField(
-
                     leadingIcon = {
                         Icon(Icons.Default.Person, contentDescription = "username")
                     },
@@ -94,8 +98,14 @@ fun login(
                         authenticationViewModel.changeUsernameInput(it)
                         authenticationViewModel.checkLoginForm()
                                     },
-                    label ={ Text(text = "Username")},
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                    label ={
+                        Text(
+                            text = "Username",
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp))
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 TextField(
@@ -104,7 +114,12 @@ fun login(
                     },
                     value = authenticationViewModel.passwordInput,
                     onValueChange = {authenticationViewModel.changePasswordInput(it)},
-                    label ={ Text(text = "Password")},
+                    label ={
+                        Text(
+                            text = "Password",
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = loginUIState.passwordVisibility
                 )
@@ -132,6 +147,7 @@ fun login(
                 Button(
                     onClick = { authenticationViewModel.loginUser(navController = navController) },
                     modifier = Modifier.padding(top = 16.dp)
+                        .fillMaxWidth()
                 ) {
                     Text(text = "Login")
                 }
