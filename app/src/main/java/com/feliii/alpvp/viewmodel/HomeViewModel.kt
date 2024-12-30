@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
-import com.feliii.alpvp.GeneralResponseModel
 import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel

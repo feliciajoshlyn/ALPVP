@@ -1,6 +1,5 @@
 package com.feliii.alpvp.service
 
-import com.feliii.alpvp.GeneralResponseModel
 import retrofit2.Call
 import retrofit2.http.Header
 import retrofit2.http.POST
