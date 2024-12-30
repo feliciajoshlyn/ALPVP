@@ -57,6 +57,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.R
+import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.uiStates.AuthenticationStatusUIState
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 
@@ -136,7 +137,6 @@ fun login(
                 )
                 .padding(16.dp)
         )
-
 
         Column(
             verticalArrangement = Arrangement.Center,
@@ -226,7 +226,12 @@ fun login(
                             text = AnnotatedString("Register"),
                             onClick = {
                                 // Handle the click and navigate to the register page
-
+                                authenticationViewModel.resetViewModel()
+                                navController.navigate(PagesEnum.Register.name) {
+                                    popUpTo(PagesEnum.Login.name) {
+                                        inclusive = true
+                                    }
+                                }
                             },
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = Color(0xFF0066CC),
