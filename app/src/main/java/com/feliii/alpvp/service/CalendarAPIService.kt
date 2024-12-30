@@ -17,7 +17,7 @@ interface CalendarAPIService {
     fun getEntryList(@Header("X-API-TOKEN") token: String): Call<GetAllCalendarResponses>
 
     @GET("api/entry-detail")
-    fun getEntry(@Header("X-API-TOKEN") token: String): Call<GetCalendarResponse>
+    fun getEntry(@Header("X-API-TOKEN") token: String, @Header("X-DATE") date: String): Call<GetCalendarResponse>
 
     @POST("api/entry")
     fun createEntry(@Header("X-API-TOKEN") token: String, @Body calendarModel: CalendarRequest): Call<GeneralResponseModel>
