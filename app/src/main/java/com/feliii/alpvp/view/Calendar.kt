@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,126 +37,129 @@ import java.util.Locale
 fun DynamicMoodCalendar() {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     val daysInMonth = currentMonth.lengthOfMonth()
-    val firstDayOfMonth = currentMonth.atDay(1).dayOfWeek.value % 7 // Monday is 0, Sunday is 6
-    val totalGridCells = 42 // 6 weeks x 7 days for consistent grid size
+    val firstDayOfMonth = currentMonth.atDay(1).dayOfWeek.value % 7 // Monday 0, Sunday 6
+    val totalGridCells = 42 // 6 weeks x 7 days
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF9370DB)) // Purple background
-            .padding(16.dp)
+            .background(Color(0xFF5E4890))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header
+        // Title
         Text(
             text = "Mood Calendar",
-            fontSize = 24.sp,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Calendar Header (Month Navigation)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconButton(onClick = {
-                currentMonth = currentMonth.minusMonths(1) // Navigate to previous month
-            }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Color.White)
-            }
-            Text(
-                text = "${currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.year}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.White
-            )
-            IconButton(onClick = {
-                currentMonth = currentMonth.plusMonths(1) // Navigate to next month
-            }) {
-                Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color.White)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Weekday Labels
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            listOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su").forEach { day ->
+        Column (
+            modifier = Modifier.background(Color(0xFFD7C4EC))
+                .padding(16.dp)
+        ){
+            // Month Navigation
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(onClick = {
+                    currentMonth = currentMonth.minusMonths(1) // Navigate to previous month
+                }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Color.White)
+                }
                 Text(
-                    text = day,
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    modifier = Modifier.weight(1f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    text = "${currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.year}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White
                 )
+                IconButton(onClick = {
+                    currentMonth = currentMonth.plusMonths(1) // Navigate to next month
+                }) {
+                    Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color.White)
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Calendar Grid
-        val daysList = List(totalGridCells) { index ->
-            if (index >= firstDayOfMonth && index < firstDayOfMonth + daysInMonth) {
-                (index - firstDayOfMonth + 1).toString() // Valid day
-            } else {
-                "" // Empty day
+            // Weekday Labels
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                listOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su").forEach { day ->
+                    Text(
+                        text = day,
+                        fontSize = 18.sp,
+                        color = Color.White,
+                        modifier = Modifier.weight(1f),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
             }
-        }
 
-        Column {
-            daysList.chunked(7).forEach { week ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    week.forEach { day ->
-                        if (day.isNotEmpty()) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(Color.White, shape = CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = day, color = Color(0xFF9370DB))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Calendar Grid
+            val daysList = List(totalGridCells) { index ->
+                if (index >= firstDayOfMonth && index < firstDayOfMonth + daysInMonth) {
+                    (index - firstDayOfMonth + 1).toString() // Valid day
+                } else {
+                    "" // Empty day
+                }
+            }
+
+            Column {
+                daysList.chunked(7).forEach { week ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        week.forEach { day ->
+                            if (day.isNotEmpty()) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(Color.White, shape = CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = day, color = Color(0xFF9370DB))
+                                }
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(Color.White, shape = CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = day, color = Color.Transparent)
+                                }
+                                //Spacer(modifier = Modifier.size(40.dp)) // Empty day placeholder
                             }
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(Color.White, shape = CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = day, color = Color.Transparent)
-                            }
-                            //Spacer(modifier = Modifier.size(40.dp)) // space for blank day
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Add Button
+        // Add Emotion Button
         Box(
             modifier = Modifier
                 .size(56.dp)
-                .background(Color.White, shape = CircleShape)
-                .align(Alignment.CenterHorizontally),
+                .background(Color.White, shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(Icons.Default.Add, contentDescription = null, tint = Color(0xFF9370DB))
         }
     }
 }
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
