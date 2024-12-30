@@ -1,5 +1,6 @@
 package com.feliii.alpvp.view
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
 import java.time.LocalDate
 import java.time.YearMonth
@@ -39,7 +41,12 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DynamicMoodCalendar() {
+fun DynamicMoodCalendar(
+    token: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    context: Context
+) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     val daysInMonth = currentMonth.lengthOfMonth()
     val firstDayOfMonth = (currentMonth.atDay(1).dayOfWeek.value + 6) % 7

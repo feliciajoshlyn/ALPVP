@@ -5,5 +5,6 @@ enum class PagesEnum() {
     Register,
     Home,
     WhackAMoleMenu,
-    WhackAMoleGame
+    WhackAMoleGame,
+    Calendar
 }

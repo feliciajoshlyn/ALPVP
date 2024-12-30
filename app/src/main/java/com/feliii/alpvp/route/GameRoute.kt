@@ -1,5 +1,7 @@
 package com.feliii.alpvp.route
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -13,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.view.DynamicMoodCalendar
 import com.feliii.alpvp.view.WhackAMoleGame
 import com.feliii.alpvp.view.WhackAMoleMenu
 import com.feliii.alpvp.viewmodel.WAMViewModel
@@ -23,6 +26,7 @@ import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RelaxGameApp(
     navController: NavHostController = rememberNavController(),
@@ -70,7 +74,8 @@ fun RelaxGameApp(
                 navController = navController,
                 context = localContext,
                 token = token.value,
-                username = username.value
+                username = username.value,
+                homeViewModel = homeViewModel
             )
         }
         composable(route = PagesEnum.WhackAMoleMenu.name) {
@@ -94,6 +99,17 @@ fun RelaxGameApp(
                 wamViewModel = wamViewModel,
                 token = token.value,
                 gameMode = ""
+            )
+        }
+
+        composable(route = PagesEnum.Calendar.name) {
+            DynamicMoodCalendar(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                navController = navController,
+                context = localContext,
+                token = token.value
             )
         }
     }

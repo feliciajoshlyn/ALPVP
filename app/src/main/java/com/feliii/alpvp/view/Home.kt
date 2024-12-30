@@ -8,12 +8,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.feliii.alpvp.viewmodel.AuthenticationViewModel
+import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.WAMViewModel
 
 @Composable
 fun mainMenu(
     modifier: Modifier = Modifier,
     wamViewModel: WAMViewModel,
+    homeViewModel: HomeViewModel,
     navController: NavHostController,
     token: String,
     username: String, //nnti delete
@@ -24,10 +27,27 @@ fun mainMenu(
         modifier = modifier
     ) {
         Text(
+            text = "whack a mole menu"
+        )
+        Text(
             text = token
         )
         Text(
             text = username
+        )
+    }
+    Button(
+        onClick = {}
+    ) {
+        Text(
+            text = "calendar"
+        )
+    }
+    Button(
+        onClick = {homeViewModel.logoutUser(token, navController)}
+    ) {
+        Text(
+            text = "logout"
         )
     }
 }
