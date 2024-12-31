@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -32,7 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,21 +58,30 @@ fun TodayMood(
 
     // Get the current date
     val currentDate = LocalDate.now()
-    val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("EEEE\nd MMMM yyyy"))
+    val dayOfWeek = currentDate.format(DateTimeFormatter.ofPattern("EEEE"))
+    val monthYear = currentDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
-    //Emotion list
+    // Mood list
     val moods = listOf(
         R.drawable.angry_emoji,
-        R.drawable.happy_emoji,
         R.drawable.sad_emoji,
+        R.drawable.happy_emoji,
         R.drawable.chill_emoji,
         R.drawable.neutral_emoji
+    )
+    // Mood Color (unclicked, clicked)
+    val moodColor = listOf(
+        Pair(Color(0xFFFF8888), Color(0xFF983939)), //Red Angry
+        Pair(Color(0xFF87C0FC), Color(0xFF4E75B0)), //Blue Sad
+        Pair(Color(0xFFF6F6D4), Color(0xFFE2C873)), //Yellow Happy
+        Pair(Color(0xFFA3E3B4), Color(0xFF63C17C)), //Green Chill
+        Pair(Color(0xFFE6E6E6), Color(0xFFBBBBBB)), //Gray Neutral
     )
 
     Box(
         modifier = Modifier.fillMaxSize()
             .background(Color(0xFF5E4890))
-            .padding(16.dp),
+            .padding(24.dp),
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -92,25 +106,47 @@ fun TodayMood(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "$formattedDate",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF5C4C9C),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                )
+                Column (
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    // Week
+                    Text(
+                        text = "$dayOfWeek",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF5C4C9C),
+                        fontFamily = FontFamily(Font(R.font.jua)),
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    // Day Month 20XX
+                    Text(
+                        text = "$monthYear",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF5C4C9C),
+                        fontFamily = FontFamily(Font(R.font.jua)),
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                HorizontalDivider(
+                    thickness = 3.dp,
+                    color = Color(0xFF5C4C9C)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "Select your mood (${3 - selectedMoods.size})",
-                    fontSize = 14.sp,
-                    color = Color(0xFF5C4C9C)
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 18.sp,
+                    color = Color(0xFF5C4C9C),
+                    fontFamily = FontFamily(Font(R.font.jua))
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Column {
+                    // Row of Angry, Sad, Happy
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround
@@ -122,6 +158,8 @@ fun TodayMood(
                                 moodId = index,
                                 drawableRes = mood,
                                 selectedMoods = selectedMoods,
+                                unclickedMood = moodColor.get(index).first,
+                                clickedMood = moodColor.get(index).second,
                                 onMoodClick = { clickedMoodId ->
                                     if (selectedMoods.contains(clickedMoodId)) {
                                         selectedMoods = selectedMoods.toMutableList().apply { remove(clickedMoodId) }
@@ -132,11 +170,33 @@ fun TodayMood(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Row of Chill, Neutral
                     Row(
-
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
+                        for (i in 0..1) {
+                            val iPlus3 = i + 3
 
+                            MoodImage(
+                                moodId = iPlus3,
+                                drawableRes = moods.get(iPlus3),
+                                selectedMoods = selectedMoods,
+                                unclickedMood = moodColor.get(iPlus3).first,
+                                clickedMood = moodColor.get(iPlus3).second,
+                                onMoodClick = { clickedMoodId ->
+                                    if (selectedMoods.contains(clickedMoodId)) {
+                                        selectedMoods = selectedMoods.toMutableList().apply { remove(clickedMoodId) }
+                                    } else if (selectedMoods.size < 3) {
+                                        selectedMoods = selectedMoods.toMutableList().apply { add(clickedMoodId) }
+                                    }
+                                }
+                            )
+                        }
                     }
+
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -146,7 +206,19 @@ fun TodayMood(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(100.dp),
-                    placeholder = { Text("Leave a note") },
+                    placeholder = {
+                        Text(
+                            text = "Leave a note...",
+                            color = Color(0xFF5C4C9C),
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                            fontSize = 18.sp
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.jua)),
+                        fontSize = 16.sp,
+                        color = Color.Black
+                    ),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(0XFFF6EDFF),
                         unfocusedContainerColor = Color(0XFFFAF4FF),
@@ -179,6 +251,8 @@ fun TodayMood(
 fun MoodImage(
     moodId: Int,
     drawableRes: Int,
+    unclickedMood: Color,
+    clickedMood: Color,
     selectedMoods: List<Int>,
     onMoodClick: (Int) -> Unit
 ) {
@@ -188,7 +262,7 @@ fun MoodImage(
         modifier = Modifier
             .clip(CircleShape)
             .size(72.dp)
-            .background(if (selectedMoods.contains(moodId)) Color(0xFF983939) else Color(0xFFFF8888))
+            .background(if (selectedMoods.contains(moodId)) clickedMood else unclickedMood)
             .clickable { onMoodClick(moodId) }
             .alpha(if (selectedMoods.contains(moodId)) 0.7f else 1f)
             .padding(2.dp)
