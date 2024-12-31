@@ -54,10 +54,10 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayMood(
-//    token: String,
-//    modifier: Modifier = Modifier,
-//    navController: NavHostController,
-//    context: Context
+    token: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    context: Context
 ) {
     var selectedMoods by remember { mutableStateOf(mutableListOf<Int>()) }
     var note by remember { mutableStateOf("") }
@@ -287,10 +287,9 @@ fun MoodButton(
     )
 }
 
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun CalendarPreview() {
-    TodayMood()
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview(showSystemUi = true, showBackground = true)
+//@Composable
+//fun CalendarPreview() {
+//    TodayMood()
+//}

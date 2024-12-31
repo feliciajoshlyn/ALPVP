@@ -114,15 +114,15 @@ fun RelaxGameApp(
             )
         }
 
-//        composable(route = PagesEnum.TodayMood.name) {
-//            TodayMood(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .padding(20.dp),
-//                navController = navController,
-//                context = localContext,
-//                token = token.value
-//            )
-//        }
+        composable(route = PagesEnum.TodayMood.name) {
+            TodayMood(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                navController = navController,
+                context = localContext,
+                token = token.value
+            )
+        }
     }
 }
