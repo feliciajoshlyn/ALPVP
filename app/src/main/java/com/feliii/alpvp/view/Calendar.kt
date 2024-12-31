@@ -3,6 +3,7 @@ package com.feliii.alpvp.view
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +44,7 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DynamicMoodCalendar(
+fun MoodCalendar(
     token: String,
     modifier: Modifier = Modifier,
     navController: NavHostController,
@@ -146,14 +149,42 @@ fun DynamicMoodCalendar(
                                         .background(Color.White),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = day,
-                                        color = Color(0xFF9370DB),
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        fontFamily = FontFamily(Font(R.font.jua)),
-                                    )
+                                    Column (
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        // Date day
+                                        Text(
+                                            text = day,
+                                            color = Color(0xFF9370DB),
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            fontFamily = FontFamily(Font(R.font.jua)),
+                                        )
+
+//                                        // Emotion Row
+//                                        Row (
+//                                            verticalAlignment = Alignment.CenterVertically
+//                                        ){
+//                                            //Test
+//                                            Image(
+//                                                painter = painterResource(R.drawable.happy_emoji),
+//                                                contentDescription = "Emoji",
+//                                                modifier = Modifier.size(8.dp)
+//                                            )
+//                                            Image(
+//                                                painter = painterResource(R.drawable.sad_emoji),
+//                                                contentDescription = "Emoji",
+//                                                modifier = Modifier.size(8.dp)
+//                                            )
+//                                            Image(
+//                                                painter = painterResource(R.drawable.chill_emoji),
+//                                                contentDescription = "Emoji",
+//                                                modifier = Modifier.size(8.dp)
+//                                            )
+//                                        }
+                                    }
                                 }
+
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))
@@ -181,11 +212,9 @@ fun DynamicMoodCalendar(
     }
 }
 
-
-
 //@RequiresApi(Build.VERSION_CODES.O)
 //@Preview(showSystemUi = true, showBackground = true)
 //@Composable
 //fun CalendarPreview() {
-//    DynamicMoodCalendar()
+//    MoodCalendar()
 //}
