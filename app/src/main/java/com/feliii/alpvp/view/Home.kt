@@ -6,7 +6,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -59,7 +62,7 @@ fun mainMenu(
         bottomBar = {
             BottomAppBar (
                 modifier = Modifier.height(96.dp),
-                containerColor = Color(0xFFF9F9F9)
+                containerColor = Color(0xFF8871CA) //Blue Marguerite
             ){
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +75,7 @@ fun mainMenu(
                         contentDescription = "user",
                         modifier = Modifier
                             .clip(CircleShape)
-                            .size(72.dp)
+                            .size(48.dp)
                             .clickable {
                                 /* logic here... */
                             }
@@ -98,7 +101,7 @@ fun mainMenu(
                         contentDescription = "calendar",
                         modifier = Modifier
                             .clip(CircleShape)
-                            .size(68.dp)
+                            .size(48.dp)
                             .clickable {
                                 /* logic here... */
                             }
@@ -108,7 +111,17 @@ fun mainMenu(
             }
         }
     ){ innerpadding ->
+        Box (
+            modifier = Modifier.fillMaxSize()
+                .background(Color(0xFF5E4890))
+                .padding(innerpadding)
+        ){
+            Column (
+                modifier = Modifier.background(Color(0xFF5E4890))
+            ){
 
+            }
+        }
     }
 
     Button(
@@ -118,14 +131,7 @@ fun mainMenu(
             text = "whack a mole menu"
         )
     }
-
-    Button(
-        onClick = {}
-    ) {
-        Text(
-            text = "calendar"
-        )
-    }
+    
     Button(
         onClick = {/*homeViewModel.logoutUser(token, navController)*/}
     ) {
