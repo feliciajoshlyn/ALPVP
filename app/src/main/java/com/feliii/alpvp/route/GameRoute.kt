@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.view.MoodCalendar
+import com.feliii.alpvp.view.TodayMood
 import com.feliii.alpvp.view.WhackAMoleGame
 import com.feliii.alpvp.view.WhackAMoleMenu
 import com.feliii.alpvp.viewmodel.WAMViewModel
@@ -112,5 +113,16 @@ fun RelaxGameApp(
                 token = token.value
             )
         }
+
+//        composable(route = PagesEnum.TodayMood.name) {
+//            TodayMood(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .padding(20.dp),
+//                navController = navController,
+//                context = localContext,
+//                token = token.value
+//            )
+//        }
     }
 }

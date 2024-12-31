@@ -1,5 +1,6 @@
 package com.feliii.alpvp.view
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -35,6 +36,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -51,7 +54,10 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayMood(
-    
+//    token: String,
+//    modifier: Modifier = Modifier,
+//    navController: NavHostController,
+//    context: Context
 ) {
     var selectedMoods by remember { mutableStateOf(mutableListOf<Int>()) }
     var note by remember { mutableStateOf("") }
@@ -100,12 +106,14 @@ fun TodayMood(
             )
             Spacer(modifier = Modifier.height(24.dp))
 
+            // main
             Column(
                 modifier = Modifier.clip(RoundedCornerShape(20.dp))
                     .background(Color(0xFFD7C4EC))
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Week, Day Month 20XX
                 Column (
                     modifier = Modifier.fillMaxWidth()
                 ){
@@ -136,6 +144,7 @@ fun TodayMood(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // Select mood (3)
                 Text(
                     text = "Select your mood (${3 - selectedMoods.size})",
                     modifier = Modifier.fillMaxWidth(),
@@ -145,6 +154,7 @@ fun TodayMood(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Mood buttons
                 Column {
                     // Row of Angry, Sad, Happy
                     Row(
@@ -154,7 +164,7 @@ fun TodayMood(
                         moods.forEachIndexed { index, mood ->
                             if (index >= 3) return@forEachIndexed
 
-                            MoodImage(
+                            MoodButton(
                                 moodId = index,
                                 drawableRes = mood,
                                 selectedMoods = selectedMoods,
@@ -180,7 +190,7 @@ fun TodayMood(
                         for (i in 0..1) {
                             val iPlus3 = i + 3
 
-                            MoodImage(
+                            MoodButton(
                                 moodId = iPlus3,
                                 drawableRes = moods.get(iPlus3),
                                 selectedMoods = selectedMoods,
@@ -200,10 +210,11 @@ fun TodayMood(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // leave a note textfield
                 TextField(
                     value = note,
                     onValueChange = { note = it },
-                    modifier = Modifier
+                    modifier = Modifier.clip(RoundedCornerShape(12.dp))
                         .fillMaxWidth()
                         .height(100.dp),
                     placeholder = {
@@ -229,26 +240,33 @@ fun TodayMood(
                 Spacer(modifier = Modifier.height(16.dp))
 
             }
+            Spacer(modifier = Modifier.height(24.dp))
 
+            // "Save" button
             Button(
                 onClick = {
                     /* Save logic here... */
                 },
                 modifier = Modifier.align(Alignment.End),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFFFFF))
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD7C4EC)
+                )
             ) {
                 Text(
                     text = "Save",
-                    fontSize = 16.sp,
-                    color = Color(0xFFE6DFFF)
+                    fontSize = 28.sp,
+                    color = Color(0xFF5E4890),
+                    fontFamily = FontFamily(Font(R.font.jua)),
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
                 )
             }
         }
     }
 }
 
+// Mood button
 @Composable
-fun MoodImage(
+fun MoodButton(
     moodId: Int,
     drawableRes: Int,
     unclickedMood: Color,

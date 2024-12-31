@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
+import com.feliii.alpvp.enums.PagesEnum
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -54,6 +56,14 @@ fun MoodCalendar(
     val daysInMonth = currentMonth.lengthOfMonth()
     val firstDayOfMonth = (currentMonth.atDay(1).dayOfWeek.value + 6) % 7
 
+    // Calendar grids between number(valid day) or empty grid
+    val daysList = List(42 /* 6 weeks x 7 days */) { index ->
+        if (index >= firstDayOfMonth && index < firstDayOfMonth + daysInMonth) {
+            (index - firstDayOfMonth + 1).toString() // Valid day
+        } else {
+            "" //Empty
+        }
+    }
 
     Box (
         modifier = Modifier .fillMaxSize()
@@ -77,6 +87,7 @@ fun MoodCalendar(
             )
             Spacer(modifier = Modifier.height(24.dp))
 
+            // <- Month 20XX ->
             Column (
                 modifier = Modifier.clip(RoundedCornerShape(20.dp))
                     .background(Color(0xFFD7C4EC))
@@ -93,19 +104,20 @@ fun MoodCalendar(
                     }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Color(0xFF5E4890))
                     }
+
                     Text(
                         text = "${currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.year}",
                         fontSize = 24.sp,
                         color = Color(0xFF5E4890),
                         fontFamily = FontFamily(Font(R.font.jua)),
                     )
+
                     IconButton(onClick = {
                         currentMonth = currentMonth.plusMonths(1) // Navigate to next month
                     }) {
                         Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFF5E4890))
                     }
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Weekday Labels
@@ -124,18 +136,9 @@ fun MoodCalendar(
                         )
                     }
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Calendar Grids
-                val daysList = List(42 /* 6 weeks x 7 days */) { index ->
-                    if (index >= firstDayOfMonth && index < firstDayOfMonth + daysInMonth) {
-                        (index - firstDayOfMonth + 1).toString() // Valid day
-                    } else {
-                        "" //Empty
-                    }
-                }
-
+                // calendar grid
                 Column {
                     daysList.chunked(7).forEach { week ->
                         Row(
@@ -161,7 +164,7 @@ fun MoodCalendar(
                                             fontFamily = FontFamily(Font(R.font.jua)),
                                         )
 
-//                                        // Emotion Row
+//                                        // Emotion Row, for now commented this
 //                                        Row (
 //                                            verticalAlignment = Alignment.CenterVertically
 //                                        ){
@@ -199,7 +202,15 @@ fun MoodCalendar(
                 .offset(y = -20.dp)
                 .size(76.dp)
                 .background(Color.White, shape = CircleShape)
-                .align(Alignment.BottomEnd),
+                .align(Alignment.BottomEnd)
+                .clickable {
+                    // navigate to "TodayMood"
+                    navController.navigate(PagesEnum.Register.name) {
+                        popUpTo(PagesEnum.Login.name) {
+                            inclusive = true
+                        }
+                    }
+                },
             contentAlignment = Alignment.Center
         ) {
             Icon(
