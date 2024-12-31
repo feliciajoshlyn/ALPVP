@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -47,13 +48,21 @@ import java.time.format.DateTimeFormatter
 fun TodayMood(
     
 ) {
-    val maxSelectableMoods by remember { mutableStateOf(3) }
-    var selectedMoods by remember { mutableStateOf(mutableSetOf<Int>()) }
+    var selectedMoods by remember { mutableStateOf(mutableListOf<Int>()) }
     var note by remember { mutableStateOf("") }
 
     // Get the current date
     val currentDate = LocalDate.now()
     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("EEEE\nd MMMM yyyy"))
+
+    //Emotion list
+    val moods = listOf(
+        R.drawable.angry_emoji,
+        R.drawable.happy_emoji,
+        R.drawable.sad_emoji,
+        R.drawable.chill_emoji,
+        R.drawable.neutral_emoji
+    )
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -94,35 +103,41 @@ fun TodayMood(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Select your mood (${maxSelectableMoods})",
+                    text = "Select your mood (${3 - selectedMoods.size})",
                     fontSize = 14.sp,
                     color = Color(0xFF5C4C9C)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.angry_emoji),
-                        contentDescription = null,
-                        modifier = Modifier.clip(CircleShape)
-                            .size(72.dp)
-                            .padding(4.dp)
-                            .clickable {
-                                if (selectedMoods.contains(0)) {
-                                    selectedMoods.remove(0)
-                                } else if (selectedMoods.size < 3) {
-                                    selectedMoods.add(0)
-                                    maxSelectableMoods - 1
-                                }
-                                selectedMoods = selectedMoods.toMutableSet() // Trigger recomposition
-                             }
-                    )
-                }
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        moods.forEachIndexed { index, mood ->
+                            if (index >= 3) return@forEachIndexed
 
+                            MoodImage(
+                                moodId = index,
+                                drawableRes = mood,
+                                selectedMoods = selectedMoods,
+                                onMoodClick = { clickedMoodId ->
+                                    if (selectedMoods.contains(clickedMoodId)) {
+                                        selectedMoods = selectedMoods.toMutableList().apply { remove(clickedMoodId) }
+                                    } else if (selectedMoods.size < 3) {
+                                        selectedMoods = selectedMoods.toMutableList().apply { add(clickedMoodId) }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                    Row(
+
+                    ) {
+
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TextField(
@@ -144,7 +159,9 @@ fun TodayMood(
             }
 
             Button(
-                onClick = { /* Save logic */ },
+                onClick = {
+                    /* Save logic here... */
+                },
                 modifier = Modifier.align(Alignment.End),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFFFFF))
             ) {
@@ -157,6 +174,27 @@ fun TodayMood(
         }
     }
 }
+
+@Composable
+fun MoodImage(
+    moodId: Int,
+    drawableRes: Int,
+    selectedMoods: List<Int>,
+    onMoodClick: (Int) -> Unit
+) {
+    Image(
+        painter = painterResource(drawableRes),
+        contentDescription = null,
+        modifier = Modifier
+            .clip(CircleShape)
+            .size(72.dp)
+            .background(if (selectedMoods.contains(moodId)) Color(0xFF983939) else Color(0xFFFF8888))
+            .clickable { onMoodClick(moodId) }
+            .alpha(if (selectedMoods.contains(moodId)) 0.7f else 1f)
+            .padding(2.dp)
+    )
+}
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showSystemUi = true, showBackground = true)
