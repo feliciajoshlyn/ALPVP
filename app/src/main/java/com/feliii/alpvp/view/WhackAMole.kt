@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.WAMViewModel
 import kotlinx.coroutines.delay
 
@@ -42,6 +43,7 @@ fun WhackAMoleGame(
     context: Context,
     token: String,
     wamViewModel: WAMViewModel,
+    homeViewModel: HomeViewModel,
     gameMode: String
 ) {
 
@@ -134,7 +136,7 @@ fun WhackAMoleGame(
             Text(text = "Mode: ${wamViewModel.endless_highscore}")
             Text(text = "Mode: ${wamViewModel.intense_highscore}")
             //popbackstack is app screen rn is removed then muncul screen before
-            Button(onClick = { wamViewModel.backToMenu(token, navController, {wamViewModel.getWAMData(token, navController)}) }) {
+            Button(onClick = { wamViewModel.backToMenu(token, navController, {homeViewModel.getWAMData(token, navController)}) }) {
                 Text(text = "Return to Menu")
             }
         }
@@ -144,5 +146,5 @@ fun WhackAMoleGame(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun WhackAMoleViewPreview() {
-    WhackAMoleGame( navController = rememberNavController(), gameMode = "endless", wamViewModel = WAMViewModel(TODO()), context = TODO(), token = TODO())
+    WhackAMoleGame( navController = rememberNavController(), gameMode = "endless", wamViewModel = WAMViewModel(TODO()), context = TODO(), homeViewModel = TODO(), token = TODO())
 }

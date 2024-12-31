@@ -89,47 +89,47 @@ class WAMViewModel (
     private var moleGenerationJob: Job? = null
     private var timerJob: Job? = null
 
-    fun getWAMData(token: String, navController: NavHostController) {
-        viewModelScope.launch {
-            dataStatus = WAMDataStatusUIState.Loading
-
-            try{
-                val call = wamRepository.getWAMData(token)
-
-                call.enqueue(object: Callback<GetWAMResponse> {
-                    override fun onResponse(
-                        call: Call<GetWAMResponse>,
-                        res: Response<GetWAMResponse>
-                    ) {
-                        if(res.isSuccessful) {
-                            dataStatus = WAMDataStatusUIState.Success(res.body()!!.data)
-
-                            Log.d("get-wam-data", "GET WAM: ${res.body()}")
-
-                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
-                                popUpTo(PagesEnum.Home.name) {
-                                    inclusive = true
-                                }
-                            }
-                        }else {
-                            val errorMessage = Gson().fromJson(
-                                res.errorBody()!!.charStream(),
-                                ErrorModel::class.java
-                            )
-
-                            dataStatus = WAMDataStatusUIState.Failed(errorMessage.errors)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<GetWAMResponse?>, t: Throwable) {
-                        dataStatus = WAMDataStatusUIState.Failed(t.localizedMessage)
-                    }
-                })
-            }catch(error: IOException) {
-                dataStatus = WAMDataStatusUIState.Failed(error.localizedMessage)
-            }
-        }
-    }
+//    fun getWAMData(token: String, navController: NavHostController) {
+//        viewModelScope.launch {
+//            dataStatus = WAMDataStatusUIState.Loading
+//
+//            try{
+//                val call = wamRepository.getWAMData(token)
+//
+//                call.enqueue(object: Callback<GetWAMResponse> {
+//                    override fun onResponse(
+//                        call: Call<GetWAMResponse>,
+//                        res: Response<GetWAMResponse>
+//                    ) {
+//                        if(res.isSuccessful) {
+//                            dataStatus = WAMDataStatusUIState.Success(res.body()!!.data)
+//
+//                            Log.d("get-wam-data", "GET WAM: ${res.body()}")
+//
+//                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
+//                                popUpTo(PagesEnum.Home.name) {
+//                                    inclusive = true
+//                                }
+//                            }
+//                        }else {
+//                            val errorMessage = Gson().fromJson(
+//                                res.errorBody()!!.charStream(),
+//                                ErrorModel::class.java
+//                            )
+//
+//                            dataStatus = WAMDataStatusUIState.Failed(errorMessage.errors)
+//                        }
+//                    }
+//
+//                    override fun onFailure(call: Call<GetWAMResponse?>, t: Throwable) {
+//                        dataStatus = WAMDataStatusUIState.Failed(t.localizedMessage)
+//                    }
+//                })
+//            }catch(error: IOException) {
+//                dataStatus = WAMDataStatusUIState.Failed(error.localizedMessage)
+//            }
+//        }
+//    }
 
     fun updateWAMData(token: String, getWAM: () -> Unit) {
         viewModelScope.launch {
@@ -147,12 +147,6 @@ class WAMViewModel (
                             submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
 
                             getWAM()
-
-//                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
-//                                popUpTo(PagesEnum.WhackAMoleMenu.name) {
-//                                    inclusive = true
-//                                }
-//                            }
 
                         } else {
                             val errorMessage = Gson().fromJson(
@@ -184,24 +178,24 @@ class WAMViewModel (
         }
     }
 
-    fun navigateToGame(navContoller: NavHostController, gameMode: String, wamMode: WhackAMoleModel){
+    fun navigateToGame(navContoller: NavHostController, gameMode: String, wamModel: WhackAMoleModel){
         mode = gameMode
         score = 0
-        mole_chosen = wamMode.mole_chosen
-        song_chosen = wamMode.song_chosen
-        timed_highscore = wamMode.timed_highscore
-        endless_highscore = wamMode.endless_highscore
-        intense_highscore = wamMode.intense_highscore
+        mole_chosen = wamModel.mole_chosen
+        song_chosen = wamModel.song_chosen
+        timed_highscore = wamModel.timed_highscore
+        endless_highscore = wamModel.endless_highscore
+        intense_highscore = wamModel.intense_highscore
 
         if(gameMode == "timed"){
-            highscore = wamMode.timed_highscore
+            highscore = wamModel.timed_highscore
             isTimedMode = true
             gridSize = 3
         }else if(gameMode == "endless"){
-            highscore = wamMode.endless_highscore
+            highscore = wamModel.endless_highscore
             gridSize = 3
         }else if(gameMode == "intense"){
-            highscore = wamMode.intense_highscore
+            highscore = wamModel.intense_highscore
             moleAppearanceDelay = 500L
             gridSize = 4
             isTimedMode = true
@@ -259,9 +253,7 @@ class WAMViewModel (
 
     fun gameOver(){
         stopGame()
-        score = 0
-        timeRemaining = 30 // Or whatever the starting value is for time
-        activeMole = -1
+
 
         if(score > highscore){
             highscore = score
@@ -279,6 +271,8 @@ class WAMViewModel (
     }
 
     fun backToMenu(token: String, navController: NavHostController, getWAM: () -> Unit){
+        score = 0
+        timeRemaining = 30
         gameIsOver = false
         updateWAMData(token, getWAM)
         navController.navigate(PagesEnum.WhackAMoleMenu.name) {

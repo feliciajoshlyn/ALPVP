@@ -15,9 +15,12 @@ import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
 import com.feliii.alpvp.model.GeneralResponseModel
+import com.feliii.alpvp.model.GetWAMResponse
 import com.feliii.alpvp.repository.UserRepository
+import com.feliii.alpvp.repository.WAMRepository
 import com.feliii.alpvp.uiStates.HomeUIState
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
+import com.feliii.alpvp.uiStates.WAMDataStatusUIState
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,10 +30,13 @@ import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Response
 
 class HomeViewModel (
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val wamRepository: WAMRepository
 ): ViewModel(){
+    var dataStatus: WAMDataStatusUIState by mutableStateOf(WAMDataStatusUIState.Start)
     private val _homeUIState = MutableStateFlow(HomeUIState())
 
     var logoutStatus: StringDataStatusUIState by mutableStateOf(StringDataStatusUIState.Start)
@@ -65,8 +71,8 @@ class HomeViewModel (
 
                 call.enqueue(object: Callback<GeneralResponseModel>{
                     override fun onResponse(
-                        call: retrofit2.Call<GeneralResponseModel>,
-                        res: retrofit2.Response<GeneralResponseModel>
+                        call: Call<GeneralResponseModel>,
+                        res: Response<GeneralResponseModel>
                     ) {
                         if(res.isSuccessful){
                             logoutStatus = StringDataStatusUIState.Success(data = res.body()!!.data)
@@ -100,12 +106,55 @@ class HomeViewModel (
         }
     }
 
+    fun getWAMData(token: String, navController: NavHostController) {
+        viewModelScope.launch {
+            dataStatus = WAMDataStatusUIState.Loading
+
+            try{
+                val call = wamRepository.getWAMData(token)
+
+                call.enqueue(object: Callback<GetWAMResponse> {
+                    override fun onResponse(
+                        call: Call<GetWAMResponse>,
+                        res: Response<GetWAMResponse>
+                    ) {
+                        if(res.isSuccessful) {
+                            dataStatus = WAMDataStatusUIState.Success(res.body()!!.data)
+
+                            Log.d("get-wam-data", "GET WAM: ${res.body()}")
+
+                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
+                            }
+                        }else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+
+                            dataStatus = WAMDataStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GetWAMResponse?>, t: Throwable) {
+                        dataStatus = WAMDataStatusUIState.Failed(t.localizedMessage)
+                    }
+                })
+            }catch(error: java.io.IOException) {
+                dataStatus = WAMDataStatusUIState.Failed(error.localizedMessage)
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as RelaxGameApplication)
                 val userRepository = application.container.userRepository
-                HomeViewModel(userRepository)
+                val wamRepository = application.container.wamRepository
+                HomeViewModel(
+                    userRepository,
+                    wamRepository
+                )
             }
         }
     }

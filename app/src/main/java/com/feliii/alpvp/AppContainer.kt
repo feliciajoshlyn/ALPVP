@@ -3,12 +3,15 @@ package com.feliii.alpvp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.feliii.alpvp.repository.AuthenticationRepository
+import com.feliii.alpvp.repository.CalendarRepository
 import com.feliii.alpvp.repository.UserRepository
 import com.feliii.alpvp.repository.NetworkAuthenticationRepository
+import com.feliii.alpvp.repository.NetworkCalendarRepository
 import com.feliii.alpvp.repository.NetworkUserRepository
 import com.feliii.alpvp.repository.NetworkWAMRepository
 import com.feliii.alpvp.repository.WAMRepository
 import com.feliii.alpvp.service.AuthenticationAPIService
+import com.feliii.alpvp.service.CalendarAPIService
 import com.feliii.alpvp.service.UserAPIService
 import com.feliii.alpvp.service.WAMAPIService
 import okhttp3.OkHttpClient
@@ -21,6 +24,7 @@ interface AppContainer {
     val authenticationRepository: AuthenticationRepository
     val userRepository: UserRepository
     val wamRepository: WAMRepository
+    val calendarRepository: CalendarRepository
 }
 
 class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : AppContainer {
@@ -44,6 +48,12 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
         retrofit.create(WAMAPIService::class.java)
     }
 
+    private val CalendarRetrofitService: CalendarAPIService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(CalendarAPIService::class.java)
+    }
+
     override val authenticationRepository: AuthenticationRepository by lazy {
         NetworkAuthenticationRepository(authenticationRetrofitService)
     }
@@ -53,6 +63,10 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
     }
     override val wamRepository: WAMRepository by lazy {
         NetworkWAMRepository(wamRetrofitService)
+    }
+
+    override val calendarRepository: CalendarRepository by lazy {
+        NetworkCalendarRepository(CalendarRetrofitService)
     }
 
     //to initialize retrofit
