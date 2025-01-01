@@ -148,6 +148,7 @@ fun register(
                 Column(
                     modifier = Modifier.padding(20.dp)
                 ) {
+                    // Input Username
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Person, contentDescription = "username")
@@ -172,6 +173,7 @@ fun register(
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
 
+                    // input Password
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "password")
@@ -197,6 +199,7 @@ fun register(
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
 
+                    // input Confirm Password
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "password")
@@ -222,6 +225,7 @@ fun register(
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
 
+                    // Have an Account? Login
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -253,8 +257,9 @@ fun register(
                     }
                     Spacer(modifier = Modifier.padding(bottom = 12.dp))
 
+                    // POST button
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { authenticationViewModel.registerUser(navController = navController) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF9141E6),
                             disabledContainerColor = Color.Gray, // Background color when disabled
@@ -277,8 +282,8 @@ fun register(
 
 }
 
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun registerPreview(){
-    register()
-}
+//@Composable
+//@Preview(showBackground = true, showSystemUi = true)
+//fun registerPreview(){
+//    register()
+//}
