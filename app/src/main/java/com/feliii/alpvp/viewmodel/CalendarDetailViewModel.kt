@@ -16,9 +16,11 @@ import androidx.navigation.NavHostController
 import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
+import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.model.GetCalendarResponse
 import com.feliii.alpvp.repository.CalendarRepository
 import com.feliii.alpvp.uiStates.CalendarDetailDataStatusUIState
+import com.feliii.alpvp.uiStates.StringDataStatusUIState
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -31,6 +33,9 @@ class CalendarDetailViewModel(
     private val calendarRepository: CalendarRepository
 ): ViewModel() {
     var dataStatus: CalendarDetailDataStatusUIState by mutableStateOf(CalendarDetailDataStatusUIState.Start)
+        private set
+
+    var submissionStatus: StringDataStatusUIState by mutableStateOf(StringDataStatusUIState.Start)
         private set
 
     var dateChosen: String by mutableStateOf("")
@@ -88,6 +93,78 @@ class CalendarDetailViewModel(
                 })
             }catch (error: IOException){
                 dataStatus = CalendarDetailDataStatusUIState.Failed(error.localizedMessage)
+            }
+        }
+    }
+
+    fun updateCalendarDetailData(token: String, id: Int){
+        viewModelScope.launch {
+            submissionStatus = StringDataStatusUIState.Loading
+
+            try{
+                val call = calendarRepository.updateEntry(token, id, dateChosen, note, moodChosen)
+
+                call.enqueue(object : Callback<GeneralResponseModel> {
+                    override fun onResponse(
+                        call: Call<GeneralResponseModel>,
+                        res: Response<GeneralResponseModel>
+                    ) {
+                        if(res.isSuccessful) {
+                            submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
+
+                        }else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GeneralResponseModel?>, t: Throwable) {
+                        TODO("Not yet implemented")
+                    }
+                })
+            }catch (error: IOException){
+                submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+            }
+        }
+    }
+
+    fun createEntryData(token: String, navController: NavHostController){
+        viewModelScope.launch {
+            submissionStatus = StringDataStatusUIState.Loading
+
+            Log.d("entry-form", "TOKEN: ${token}")
+
+            try{
+                val call = calendarRepository.createEntry(token, dateChosen, note, moodChosen)
+
+                call.enqueue(object : Callback<GeneralResponseModel> {
+                    override fun onResponse(
+                        call: Call<GeneralResponseModel>,
+                        res: Response<GeneralResponseModel>
+                    ) {
+                        if (res.isSuccessful) {
+                            Log.d("json", "JSON RESPONSE: ${res.body()!!.data}")
+                            submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
+
+                            navController.navigate(PagesEnum.Calendar.name)
+                        } else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GeneralResponseModel>, t: Throwable) {
+                        submissionStatus = StringDataStatusUIState.Failed(t.localizedMessage)
+                    }
+                })
+            }catch(error: IOException){
+                submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
             }
         }
     }
