@@ -1,5 +1,6 @@
 package com.feliii.alpvp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import com.feliii.alpvp.view.WhackAMoleMenu
 import com.feliii.alpvp.route.RelaxGameApp
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
