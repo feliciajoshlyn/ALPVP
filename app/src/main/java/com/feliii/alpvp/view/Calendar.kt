@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.uiStates.CalendarDataStatusUIState
+import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.YearMonth
@@ -54,6 +55,7 @@ fun MoodCalendar(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     calendarViewModel: CalendarViewModel,
+    calendarDetailViewModel: CalendarDetailViewModel,
     context: Context
 ) {
     val dataStatus = calendarViewModel.dataStatus
@@ -62,6 +64,7 @@ fun MoodCalendar(
     val today = LocalDate.now()
     val daysInMonth = currentMonth.lengthOfMonth()
     val firstDayOfMonth = (currentMonth.atDay(1).dayOfWeek.value + 6) % 7
+    val isFutureDate = selectedDate.isAfter(today)
 
     val daysList = List(42) { index ->
         if (index >= firstDayOfMonth && index < firstDayOfMonth + daysInMonth) {
@@ -113,7 +116,11 @@ fun MoodCalendar(
         }
 
         AddEmotionButton(
+            calendarDetailViewModel = calendarDetailViewModel,
+            dateChosen = selectedDate.toString(),
             navController = navController,
+            token = token,
+            isEnabled = !isFutureDate,
             modifier = Modifier.align(Alignment.BottomEnd)
         )
     }
@@ -198,27 +205,40 @@ fun CalendarGrid(
 }
 
 @Composable
-fun AddEmotionButton(navController: NavHostController, modifier: Modifier ) {
+fun AddEmotionButton(
+    calendarDetailViewModel: CalendarDetailViewModel,
+    dateChosen: String,
+    navController: NavHostController,
+    token: String,
+    isEnabled: Boolean,
+    modifier: Modifier
+) {
     Box(
         modifier = modifier
             .offset(y = -20.dp)
             .size(76.dp)
-            .background(Color.White, shape = CircleShape)
-            .clickable {
-                navController.navigate(PagesEnum.TodayMood.name) {
-                    popUpTo(PagesEnum.Calendar.name) { inclusive = true }
-                }
+            .background(
+                if (isEnabled) Color.White else Color.Gray, // Use gray background if disabled
+                shape = CircleShape
+            )
+            .clickable(enabled = isEnabled) { // Disable click if not enabled
+                calendarDetailViewModel.getCalendarDetailData(
+                    navController = navController,
+                    date = dateChosen,
+                    token = token
+                )
             },
         contentAlignment = Alignment.Center
     ) {
         Icon(
             Icons.Default.Add,
             contentDescription = null,
-            tint = Color(0xFF9370DB),
+            tint = if (isEnabled) Color(0xFF9370DB) else Color.DarkGray, // Change icon color if disabled
             modifier = Modifier.size(36.dp)
         )
     }
 }
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)

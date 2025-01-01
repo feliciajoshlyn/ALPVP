@@ -46,7 +46,7 @@ fun WhackAMoleMenu(
     var isPlaying = remember { mutableStateOf(false) }
     val song = remember { MediaPlayer.create(context, R.raw.lofi) }
 
-    val dataStatus = homeViewModel.dataStatus
+    val dataStatus = homeViewModel.wamDataStatus
 
     when(dataStatus){
         is WAMDataStatusUIState.Success ->

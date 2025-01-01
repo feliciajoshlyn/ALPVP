@@ -36,7 +36,7 @@ class HomeViewModel (
     private val userRepository: UserRepository,
     private val wamRepository: WAMRepository
 ): ViewModel(){
-    var dataStatus: WAMDataStatusUIState by mutableStateOf(WAMDataStatusUIState.Start)
+    var wamDataStatus: WAMDataStatusUIState by mutableStateOf(WAMDataStatusUIState.Start)
     private val _homeUIState = MutableStateFlow(HomeUIState())
 
     var logoutStatus: StringDataStatusUIState by mutableStateOf(StringDataStatusUIState.Start)
@@ -90,7 +90,6 @@ class HomeViewModel (
                                 ErrorModel::class.java
                             )
                             logoutStatus = StringDataStatusUIState.Failed(errorMessage.errors)
-                            //set error message toast
                         }
                     }
 
@@ -108,7 +107,7 @@ class HomeViewModel (
 
     fun getWAMData(token: String, navController: NavHostController) {
         viewModelScope.launch {
-            dataStatus = WAMDataStatusUIState.Loading
+            wamDataStatus = WAMDataStatusUIState.Loading
 
             try{
                 val call = wamRepository.getWAMData(token)
@@ -119,7 +118,7 @@ class HomeViewModel (
                         res: Response<GetWAMResponse>
                     ) {
                         if(res.isSuccessful) {
-                            dataStatus = WAMDataStatusUIState.Success(res.body()!!.data)
+                            wamDataStatus = WAMDataStatusUIState.Success(res.body()!!.data)
 
                             Log.d("get-wam-data", "GET WAM: ${res.body()}")
 
@@ -131,16 +130,16 @@ class HomeViewModel (
                                 ErrorModel::class.java
                             )
 
-                            dataStatus = WAMDataStatusUIState.Failed(errorMessage.errors)
+                            wamDataStatus = WAMDataStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
                     override fun onFailure(call: Call<GetWAMResponse?>, t: Throwable) {
-                        dataStatus = WAMDataStatusUIState.Failed(t.localizedMessage)
+                        wamDataStatus = WAMDataStatusUIState.Failed(t.localizedMessage)
                     }
                 })
             }catch(error: java.io.IOException) {
-                dataStatus = WAMDataStatusUIState.Failed(error.localizedMessage)
+                wamDataStatus = WAMDataStatusUIState.Failed(error.localizedMessage)
             }
         }
     }

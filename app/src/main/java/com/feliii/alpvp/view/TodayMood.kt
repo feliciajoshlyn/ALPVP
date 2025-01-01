@@ -2,6 +2,7 @@ package com.feliii.alpvp.view
 
 import android.content.Context
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
+import com.feliii.alpvp.uiStates.StringDataStatusUIState
+import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
+import com.feliii.alpvp.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -57,15 +62,19 @@ fun TodayMood(
     token: String,
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    calendarDetailViewModel: CalendarDetailViewModel,
     context: Context
 ) {
     var selectedMoods by remember { mutableStateOf(mutableListOf<Int>()) }
     var note by remember { mutableStateOf("") }
 
-    // Get the current date
-    val currentDate = LocalDate.now()
-    val dayOfWeek = currentDate.format(DateTimeFormatter.ofPattern("EEEE"))
-    val monthYear = currentDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+    LaunchedEffect(calendarDetailViewModel.dataStatus) {
+        val dataStatus = calendarDetailViewModel.dataStatus
+        if(dataStatus is StringDataStatusUIState.Failed) {
+            Toast.makeText(context, dataStatus.errorMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     // Mood list
     val moods = listOf(
@@ -119,7 +128,7 @@ fun TodayMood(
                 ){
                     // Week
                     Text(
-                        text = "$dayOfWeek",
+                        text = calendarDetailViewModel.dayOfWeek,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF5C4C9C),
@@ -129,7 +138,7 @@ fun TodayMood(
 
                     // Day Month 20XX
                     Text(
-                        text = "$monthYear",
+                        text = calendarDetailViewModel.monthYear,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF5C4C9C),

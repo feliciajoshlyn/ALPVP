@@ -25,6 +25,7 @@ import com.feliii.alpvp.view.login
 import com.feliii.alpvp.view.mainMenu
 import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
+import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
 
@@ -35,7 +36,8 @@ fun RelaxGameApp(
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory),
     wamViewModel: WAMViewModel = viewModel(factory = WAMViewModel.Factory),
-    calendarViewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.Factory)
+    calendarViewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.Factory),
+    calendarDetailViewModel: CalendarDetailViewModel = viewModel(factory = CalendarDetailViewModel.Factory)
 ){
     val localContext = LocalContext.current
     val token = homeViewModel.token.collectAsState()
@@ -115,6 +117,7 @@ fun RelaxGameApp(
                 navController = navController,
                 context = localContext,
                 calendarViewModel = calendarViewModel,
+                calendarDetailViewModel = calendarDetailViewModel,
                 token = token.value
             )
         }
@@ -126,6 +129,7 @@ fun RelaxGameApp(
                     .padding(20.dp),
                 navController = navController,
                 context = localContext,
+                calendarDetailViewModel = calendarDetailViewModel,
                 token = token.value
             )
         }
