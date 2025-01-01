@@ -154,12 +154,13 @@ fun login(
 
             Box(
                 modifier = Modifier
-                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFFD7C4EC))
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp)
                 ) {
+                    // input Username textfield
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Person, contentDescription = "username")
@@ -187,6 +188,7 @@ fun login(
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
 
+                    // input Password textfield
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "password")
@@ -212,6 +214,7 @@ fun login(
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
 
+                    // Don't have an account yet? Register
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -243,6 +246,7 @@ fun login(
                     }
                     Spacer(modifier = Modifier.padding(bottom = 12.dp))
 
+                    // POST button
                     Button(
                         onClick = { authenticationViewModel.loginUser(navController = navController) },
                         colors = ButtonDefaults.buttonColors(
@@ -264,8 +268,8 @@ fun login(
     }
 }
 
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun loginPreview(){
-    login()
-}
+//@Composable
+//@Preview(showBackground = true, showSystemUi = true)
+//fun loginPreview(){
+//    login()
+//}
