@@ -28,21 +28,6 @@ fun mainMenu(
     context: Context
 ){
 
-    val logoutStatus = homeViewModel.logoutStatus
-
-    LaunchedEffect(logoutStatus) {
-        if (logoutStatus is StringDataStatusUIState.Failed) {
-            Toast.makeText(context, "LOGOUT ERROR: ${logoutStatus.errorMessage}", Toast.LENGTH_SHORT).show()
-            homeViewModel.clearLogoutErrorMessage()
-        }
-    }
-
-    if(logoutStatus is StringDataStatusUIState.Loading){
-
-    }else{
-        Column {
-
-        }
-    }
+    
 
 }
