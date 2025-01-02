@@ -126,7 +126,7 @@ fun MoodCalendar(
 
         AddEmotionButton(
             calendarDetailViewModel = calendarDetailViewModel,
-            dateChosen = selectedDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")),
+            dateChosen = selectedDate.toString(),
             navController = navController,
             token = token,
             isEnabled = !isFutureDate,
