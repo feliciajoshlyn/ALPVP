@@ -140,6 +140,7 @@ fun login(
                 .padding(16.dp)
         )
 
+        // Login
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,7 +163,7 @@ fun login(
                 Column(
                     modifier = Modifier.padding(20.dp)
                 ) {
-                    // input Username textfield
+                    // input Username
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Person, contentDescription = "username")
@@ -242,7 +243,7 @@ fun login(
                         ClickableText(
                             text = AnnotatedString("Register"),
                             onClick = {
-                                // Handle the click and navigate to the register page
+                                // navigate to the register page
                                 authenticationViewModel.resetViewModel()
                                 navController.navigate(PagesEnum.Register.name) {
                                     popUpTo(PagesEnum.Login.name) {
