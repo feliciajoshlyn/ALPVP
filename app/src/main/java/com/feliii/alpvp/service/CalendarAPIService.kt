@@ -24,6 +24,9 @@ interface CalendarAPIService {
 
     @PUT("api/entry/{id}")
     fun updateEntry(@Header("X-API-TOKEN") token: String, @Path("id") entryId: Int, @Body calendarModel: CalendarRequest): Call<GeneralResponseModel>
+
+    @PUT("api/entry-detail")
+    fun createOrUpdate(@Header("X-API-TOKEN") token: String, @Body calendarModel: CalendarRequest): Call<GeneralResponseModel>
 }
 
 //protectedRouter.post("/api/entry", CalendarController.createEntry)

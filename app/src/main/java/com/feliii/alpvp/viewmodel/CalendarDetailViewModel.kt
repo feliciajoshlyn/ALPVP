@@ -44,14 +44,32 @@ class CalendarDetailViewModel(
     var moodChosen: List<Int> by mutableStateOf(emptyList())
         private set
 
+    val selectableMood:Int
+        get() = 3 - moodChosen.size
+
     var note: String by mutableStateOf("")
         private set
+
+    fun changeNote(newNote: String){
+        note = newNote
+    }
 
     var dayOfWeek: String by mutableStateOf("")
         private set
 
     var monthYear: String by mutableStateOf("")
         private set
+
+    fun selectMood(moodId: Int){
+        moodChosen = if(moodChosen.contains(moodId)){
+            moodChosen.toMutableList().apply { remove(moodId) }
+        } else if(moodChosen.size < 3){
+            moodChosen.toMutableList().apply { add(moodId) }
+        } else {
+            moodChosen
+        }
+    }
+
 
     fun getCalendarDetailData(token: String,navController: NavHostController, date: String) {
         viewModelScope.launch {
@@ -70,7 +88,7 @@ class CalendarDetailViewModel(
 
                             Log.d("get-calendar-detail-data", "GET CALENDAR DETAIL: ${res.body()}")
                             note = res.body()!!.data.note
-                            moodChosen = res.body()!!.data.moods
+                            moodChosen = res.body()!!.data.moods.map { it - 1 }
                             dateChosen = date
                             val localDate = java.time.LocalDate.parse(dateChosen)
                             dayOfWeek = localDate.format(DateTimeFormatter.ofPattern("EEEE"))
@@ -97,48 +115,89 @@ class CalendarDetailViewModel(
         }
     }
 
-    fun updateCalendarDetailData(token: String, id: Int){
-        viewModelScope.launch {
+//    fun updateCalendarDetailData(token: String, id: Int){
+//        viewModelScope.launch {
+//            submissionStatus = StringDataStatusUIState.Loading
+//
+//            try{
+//                val call = calendarRepository.updateEntry(token, id, dateChosen, note, moodChosen)
+//
+//                call.enqueue(object : Callback<GeneralResponseModel> {
+//                    override fun onResponse(
+//                        call: Call<GeneralResponseModel>,
+//                        res: Response<GeneralResponseModel>
+//                    ) {
+//                        if(res.isSuccessful) {
+//                            submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
+//
+//                        }else {
+//                            val errorMessage = Gson().fromJson(
+//                                res.errorBody()!!.charStream(),
+//                                ErrorModel::class.java
+//                            )
+//                            submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+//                        }
+//                    }
+//
+//                    override fun onFailure(call: Call<GeneralResponseModel?>, t: Throwable) {
+//                        TODO("Not yet implemented")
+//                    }
+//                })
+//            }catch (error: IOException){
+//                submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+//            }
+//        }
+//    }
+//
+//    fun createEntryData(token: String, navController: NavHostController){
+//        viewModelScope.launch {
+//            submissionStatus = StringDataStatusUIState.Loading
+//
+//            Log.d("entry-form", "TOKEN: ${token}")
+//
+//            try{
+//                val call = calendarRepository.createEntry(token, dateChosen, note, moodChosen)
+//
+//                call.enqueue(object : Callback<GeneralResponseModel> {
+//                    override fun onResponse(
+//                        call: Call<GeneralResponseModel>,
+//                        res: Response<GeneralResponseModel>
+//                    ) {
+//                        if (res.isSuccessful) {
+//                            Log.d("json", "JSON RESPONSE: ${res.body()!!.data}")
+//                            submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
+//
+//                            navController.navigate(PagesEnum.Calendar.name)
+//                        } else {
+//                            val errorMessage = Gson().fromJson(
+//                                res.errorBody()!!.charStream(),
+//                                ErrorModel::class.java
+//                            )
+//                            submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+//                        }
+//                    }
+//
+//                    override fun onFailure(call: Call<GeneralResponseModel>, t: Throwable) {
+//                        submissionStatus = StringDataStatusUIState.Failed(t.localizedMessage)
+//                    }
+//                })
+//            }catch(error: IOException){
+//                submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+//            }
+//        }
+//    }
+
+    fun saveButton(token: String, navController: NavHostController) {
+
+        viewModelScope.launch{
             submissionStatus = StringDataStatusUIState.Loading
 
-            try{
-                val call = calendarRepository.updateEntry(token, id, dateChosen, note, moodChosen)
 
-                call.enqueue(object : Callback<GeneralResponseModel> {
-                    override fun onResponse(
-                        call: Call<GeneralResponseModel>,
-                        res: Response<GeneralResponseModel>
-                    ) {
-                        if(res.isSuccessful) {
-                            submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
+            Log.d("Entry-form", "TOKEN: ${token}")
 
-                        }else {
-                            val errorMessage = Gson().fromJson(
-                                res.errorBody()!!.charStream(),
-                                ErrorModel::class.java
-                            )
-                            submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<GeneralResponseModel?>, t: Throwable) {
-                        TODO("Not yet implemented")
-                    }
-                })
-            }catch (error: IOException){
-                submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
-            }
-        }
-    }
-
-    fun createEntryData(token: String, navController: NavHostController){
-        viewModelScope.launch {
-            submissionStatus = StringDataStatusUIState.Loading
-
-            Log.d("entry-form", "TOKEN: ${token}")
-
-            try{
-                val call = calendarRepository.createEntry(token, dateChosen, note, moodChosen)
+            try {
+                val adjustedMoods = moodChosen.map { it + 1 }
+                val call = calendarRepository.createOrUpdate(token, dateChosen, note, adjustedMoods)
 
                 call.enqueue(object : Callback<GeneralResponseModel> {
                     override fun onResponse(
@@ -150,7 +209,8 @@ class CalendarDetailViewModel(
                             submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
 
                             navController.navigate(PagesEnum.Calendar.name)
-                        } else {
+                            resetViewModel()
+                        }else{
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
@@ -162,12 +222,22 @@ class CalendarDetailViewModel(
                     override fun onFailure(call: Call<GeneralResponseModel>, t: Throwable) {
                         submissionStatus = StringDataStatusUIState.Failed(t.localizedMessage)
                     }
+
                 })
-            }catch(error: IOException){
+            }catch (error: IOException){
                 submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
             }
         }
     }
+
+    fun resetViewModel (){
+        dateChosen = ""
+        moodChosen = emptyList()
+        note = ""
+        dayOfWeek = ""
+        monthYear = ""
+    }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

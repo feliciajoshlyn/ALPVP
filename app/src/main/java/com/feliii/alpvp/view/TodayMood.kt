@@ -65,8 +65,6 @@ fun TodayMood(
     calendarDetailViewModel: CalendarDetailViewModel,
     context: Context
 ) {
-    var selectedMoods by remember { mutableStateOf(mutableListOf<Int>()) }
-    var note by remember { mutableStateOf("") }
 
     LaunchedEffect(calendarDetailViewModel.dataStatus) {
         val dataStatus = calendarDetailViewModel.dataStatus
@@ -78,19 +76,19 @@ fun TodayMood(
 
     // Mood list
     val moods = listOf(
-        R.drawable.angry_emoji,
-        R.drawable.sad_emoji,
         R.drawable.happy_emoji,
         R.drawable.chill_emoji,
-        R.drawable.neutral_emoji
+        R.drawable.neutral_emoji,
+        R.drawable.sad_emoji,
+        R.drawable.angry_emoji,
     )
     // Mood Color (unclicked, clicked)
     val moodColor = listOf(
-        Pair(Color(0xFFFF8888), Color(0xFF983939)), //Red Angry
-        Pair(Color(0xFF87C0FC), Color(0xFF4E75B0)), //Blue Sad
         Pair(Color(0xFFF6F6D4), Color(0xFFE2C873)), //Yellow Happy
         Pair(Color(0xFFA3E3B4), Color(0xFF63C17C)), //Green Chill
         Pair(Color(0xFFE6E6E6), Color(0xFFBBBBBB)), //Gray Neutral
+        Pair(Color(0xFF87C0FC), Color(0xFF4E75B0)), //Blue Sad
+        Pair(Color(0xFFFF8888), Color(0xFF983939)), //Red Angry
     )
 
     Box(
@@ -155,7 +153,7 @@ fun TodayMood(
 
                 // Select mood (3)
                 Text(
-                    text = "Select your mood (${3 - selectedMoods.size})",
+                    text = "Select your mood (${calendarDetailViewModel.selectableMood})",
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 18.sp,
                     color = Color(0xFF5C4C9C),
@@ -176,16 +174,10 @@ fun TodayMood(
                             MoodButton(
                                 moodId = index,
                                 drawableRes = mood,
-                                selectedMoods = selectedMoods,
+                                selectedMoods = calendarDetailViewModel.moodChosen,
                                 unclickedMood = moodColor.get(index).first,
                                 clickedMood = moodColor.get(index).second,
-                                onMoodClick = { clickedMoodId ->
-                                    if (selectedMoods.contains(clickedMoodId)) {
-                                        selectedMoods = selectedMoods.toMutableList().apply { remove(clickedMoodId) }
-                                    } else if (selectedMoods.size < 3) {
-                                        selectedMoods = selectedMoods.toMutableList().apply { add(clickedMoodId) }
-                                    }
-                                }
+                                onMoodClick = { calendarDetailViewModel.selectMood(it)}
                             )
                         }
                     }
@@ -202,27 +194,20 @@ fun TodayMood(
                             MoodButton(
                                 moodId = iPlus3,
                                 drawableRes = moods.get(iPlus3),
-                                selectedMoods = selectedMoods,
+                                selectedMoods = calendarDetailViewModel.moodChosen,
                                 unclickedMood = moodColor.get(iPlus3).first,
                                 clickedMood = moodColor.get(iPlus3).second,
-                                onMoodClick = { clickedMoodId ->
-                                    if (selectedMoods.contains(clickedMoodId)) {
-                                        selectedMoods = selectedMoods.toMutableList().apply { remove(clickedMoodId) }
-                                    } else if (selectedMoods.size < 3) {
-                                        selectedMoods = selectedMoods.toMutableList().apply { add(clickedMoodId) }
-                                    }
-                                }
+                                onMoodClick = { calendarDetailViewModel.selectMood(it)}
                             )
                         }
                     }
-
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // leave a note textfield
                 TextField(
-                    value = note,
-                    onValueChange = { note = it },
+                    value = calendarDetailViewModel.note,
+                    onValueChange = { calendarDetailViewModel.changeNote(it) },
                     modifier = Modifier.clip(RoundedCornerShape(12.dp))
                         .fillMaxWidth()
                         .height(100.dp),
@@ -253,9 +238,7 @@ fun TodayMood(
 
             // "Save" button
             Button(
-                onClick = {
-                    /* Save logic here... */
-                },
+                onClick = { calendarDetailViewModel.saveButton(token, navController) },
                 modifier = Modifier.align(Alignment.End),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFD7C4EC)

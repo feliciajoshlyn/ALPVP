@@ -15,6 +15,8 @@ interface CalendarRepository {
     fun createEntry(token: String, date: String, note: String, moods: List<Int>): Call<GeneralResponseModel>
 
     fun updateEntry(token: String, entryId: Int, date: String, note: String, moods: List<Int>): Call<GeneralResponseModel>
+
+    fun createOrUpdate(token: String, date: String, note: String, moods: List<Int>): Call<GeneralResponseModel>
 }
 
 class NetworkCalendarRepository (
@@ -45,5 +47,14 @@ class NetworkCalendarRepository (
         moods: List<Int>
     ): Call<GeneralResponseModel> {
         return calendarAPIService.updateEntry(token, entryId, CalendarRequest(date, note, moods))
+    }
+
+    override fun createOrUpdate(
+        token: String,
+        date: String,
+        note: String,
+        moods: List<Int>
+    ): Call<GeneralResponseModel>{
+        return calendarAPIService.createOrUpdate(token, CalendarRequest(date, note, moods))
     }
 }
