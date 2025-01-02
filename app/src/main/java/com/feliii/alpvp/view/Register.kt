@@ -1,8 +1,10 @@
 package com.feliii.alpvp.view
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +56,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.R
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.uiStates.AuthenticationStatusUIState
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 
 @Composable
@@ -61,9 +66,16 @@ fun register(
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+
+    val registerUIState by authenticationViewModel.authenticationUIState.collectAsState()
+
+    LaunchedEffect(authenticationViewModel.dataStatus) {
+        val dataStatus = authenticationViewModel.dataStatus
+        if (dataStatus is AuthenticationStatusUIState.Failed) {
+            Toast.makeText(context, dataStatus.errorMessage, Toast.LENGTH_SHORT).show()
+            authenticationViewModel.clearErrorMessage()
+        }
+    }
 
 
     // this Box is the background
@@ -126,6 +138,7 @@ fun register(
                 .padding(16.dp)
         )
 
+        // Register
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -142,7 +155,7 @@ fun register(
 
             Box(
                 modifier = Modifier
-                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFFD7C4EC))
             ) {
                 Column(
@@ -153,8 +166,11 @@ fun register(
                         leadingIcon = {
                             Icon(Icons.Default.Person, contentDescription = "username")
                         },
-                        value = username,
-                        onValueChange = { username = it },
+                        value = authenticationViewModel.usernameInput,
+                        onValueChange = {
+                            authenticationViewModel.changeUsernameInput(it)
+                            authenticationViewModel.checkRegisterForm()
+                        },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color(0XFFF6EDFF),
                             unfocusedContainerColor = Color(0XFFFAF4FF),
@@ -178,8 +194,11 @@ fun register(
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "password")
                         },
-                        value = password,
-                        onValueChange = { password = it },
+                        value = authenticationViewModel.passwordInput,
+                        onValueChange = {
+                            authenticationViewModel.changePasswordInput(it)
+                            authenticationViewModel.checkRegisterForm()
+                        },
                         label = {
                             Text(
                                 text = "Password",
@@ -194,8 +213,17 @@ fun register(
                             unfocusedIndicatorColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth()
+                        visualTransformation = registerUIState.passwordVisibility,
+                        modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+                        trailingIcon = {
+                            Icon (
+                                painter = if (registerUIState.showPassword) painterResource(R.drawable.visibility) else painterResource(R.drawable.visibility_off),
+                                contentDescription = "hide/show password",
+                                modifier = Modifier.clickable {
+                                    authenticationViewModel.changePasswordVisibility()
+                                }
+                            )
+                        },
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
 
@@ -204,8 +232,11 @@ fun register(
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "password")
                         },
-                        value = confirmPassword,
-                        onValueChange = { confirmPassword = it },
+                        value = authenticationViewModel.confirmPasswordInput,
+                        onValueChange = {
+                            authenticationViewModel.changeConfirmPasswordInput(it)
+                            authenticationViewModel.checkRegisterForm()
+                        },
                         label = {
                             Text(
                                 text = "Confirm Password",
@@ -221,7 +252,16 @@ fun register(
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         visualTransformation = PasswordVisualTransformation(),
-                        modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth()
+                        modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+                        trailingIcon = {
+                            Icon (
+                                painter = if (registerUIState.showConfirmPassword) painterResource(R.drawable.visibility) else painterResource(R.drawable.visibility_off),
+                                contentDescription = "hide/show password",
+                                modifier = Modifier.clickable {
+                                    authenticationViewModel.changePasswordVisibility()
+                                }
+                            )
+                        },
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
 
@@ -239,7 +279,7 @@ fun register(
                         ClickableText(
                             text = AnnotatedString("Login"),
                             onClick = {
-                                // Handle the click and navigate to the register page
+                                // navigate to the register page
                                 authenticationViewModel.resetViewModel()
                                 navController.navigate(PagesEnum.Login.name) {
                                     popUpTo(PagesEnum.Register.name) {
@@ -260,6 +300,7 @@ fun register(
                     // POST button
                     Button(
                         onClick = { authenticationViewModel.registerUser(navController = navController) },
+                        enabled = registerUIState.buttonEnabled,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF9141E6),
                             disabledContainerColor = Color.Gray, // Background color when disabled
