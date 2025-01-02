@@ -188,6 +188,13 @@ class CalendarDetailViewModel(
 //    }
 
     fun saveButton(token: String, navController: NavHostController) {
+        if(moodChosen.size == 0 && note.equals("")){
+            navController.navigate(PagesEnum.Calendar.name){
+                popUpTo(PagesEnum.Calendar.name){
+                    inclusive = true
+                }
+            }
+        }
 
         viewModelScope.launch{
             submissionStatus = StringDataStatusUIState.Loading
@@ -208,8 +215,12 @@ class CalendarDetailViewModel(
                             Log.d("json", "JSON RESPONSE: ${res.body()!!.data}")
                             submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
 
-                            navController.navigate(PagesEnum.Calendar.name)
-                            resetViewModel()
+                            navController.navigate(PagesEnum.Calendar.name) {
+                                popUpTo(PagesEnum.Calendar.name) {
+                                    inclusive = true
+                                }
+                            }
+
                         }else{
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
@@ -230,13 +241,6 @@ class CalendarDetailViewModel(
         }
     }
 
-    fun resetViewModel (){
-        dateChosen = ""
-        moodChosen = emptyList()
-        note = ""
-        dayOfWeek = ""
-        monthYear = ""
-    }
 
 
     companion object {
