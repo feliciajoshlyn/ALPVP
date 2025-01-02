@@ -29,10 +29,10 @@ interface AppContainer {
 }
 
 class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : AppContainer {
-    //private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
+    private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
 
-    val ipAddress = getDeviceIPAddress()
-    private val APIBaseURL = "http://$ipAddress:3000/"
+//    val ipAddress = getDeviceIPAddress()
+//    private val APIBaseURL = "http://$ipAddress:3000/"
 
     private val authenticationRetrofitService: AuthenticationAPIService by lazy {
         val retrofit = initRetrofit()

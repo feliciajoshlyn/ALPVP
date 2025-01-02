@@ -45,6 +45,7 @@ import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -125,7 +126,7 @@ fun MoodCalendar(
 
         AddEmotionButton(
             calendarDetailViewModel = calendarDetailViewModel,
-            dateChosen = selectedDate.toString(),
+            dateChosen = selectedDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")),
             navController = navController,
             token = token,
             isEnabled = !isFutureDate,
@@ -180,7 +181,7 @@ fun CalendarGrid(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "",
+                                text = day,
                                 fontSize = 20.sp,
                             )
                         }
@@ -216,23 +217,28 @@ fun CalendarGrid(
                                     fontFamily = FontFamily(Font(R.font.jua))
                                 )
 
-                                dayData?.moods?.forEach { mood ->
-                                    val emojiResource = when (mood) {
-                                        1 -> R.drawable.happy_emoji
-                                        2 -> R.drawable.chill_emoji
-                                        3 -> R.drawable.neutral_emoji
-                                        4 -> R.drawable.sad_emoji
-                                        5 -> R.drawable.angry_emoji
-                                        else -> null
-                                    }
-                                    emojiResource?.let { res ->
-                                        Image(
-                                            painter = painterResource(res),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
-                                        )
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ){
+                                    dayData?.moods?.forEach { mood ->
+                                        val emojiResource = when (mood) {
+                                            1 -> R.drawable.happy_emoji
+                                            2 -> R.drawable.chill_emoji
+                                            3 -> R.drawable.neutral_emoji
+                                            4 -> R.drawable.sad_emoji
+                                            5 -> R.drawable.angry_emoji
+                                            else -> null
+                                        }
+                                        emojiResource?.let { res ->
+                                            Image(
+                                                painter = painterResource(res),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
                                     }
                                 }
+
                             }
                         }
                     }
@@ -260,6 +266,7 @@ fun AddEmotionButton(
                 if (isEnabled) Color.White else Color.Gray,
                 shape = CircleShape
             )
+            .clip(CircleShape)
             .clickable(enabled = isEnabled) {
                 calendarDetailViewModel.getCalendarDetailData(
                     navController = navController,
@@ -272,7 +279,7 @@ fun AddEmotionButton(
         Icon(
             Icons.Default.Add,
             contentDescription = null,
-            tint = if (isEnabled) Color(0xFF9370DB) else Color.DarkGray, // Change icon color if disabled
+            tint = if (isEnabled) Color(0xFF9370DB) else Color.DarkGray,
             modifier = Modifier.size(36.dp)
         )
     }
