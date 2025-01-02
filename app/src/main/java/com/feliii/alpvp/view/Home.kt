@@ -60,30 +60,34 @@ fun mainMenu(
     token: String,
     username: String, //nnti delete
     context: Context
-){
+) {
     val logoutStatus = homeViewModel.logoutStatus
 
     LaunchedEffect(logoutStatus) {
         if (logoutStatus is StringDataStatusUIState.Failed) {
-            Toast.makeText(context, "LOGOUT ERROR: ${logoutStatus.errorMessage}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "LOGOUT ERROR: ${logoutStatus.errorMessage}",
+                Toast.LENGTH_SHORT
+            ).show()
             homeViewModel.clearLogoutErrorMessage()
         }
     }
 
-    if(logoutStatus is StringDataStatusUIState.Loading){
+    if (logoutStatus is StringDataStatusUIState.Loading) {
 
-    } else{
-        Scaffold (
+    } else {
+        Scaffold(
             bottomBar = {
-                BottomAppBar (
+                BottomAppBar(
                     modifier = Modifier.height(96.dp),
                     containerColor = Color(0xFF8871CA) //Blue Marguerite
-                ){
-                    Row (
+                ) {
+                    Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier.fillMaxWidth()
-                    ){
+                    ) {
                         // User bottom navbar
                         Image(
                             painter = painterResource(R.drawable.user_personoutline),
@@ -125,20 +129,21 @@ fun mainMenu(
                     }
                 }
             }
-        ){ innerpadding ->
-            Box (
+        ) { innerpadding ->
+            Box(
                 modifier = Modifier.fillMaxSize()
                     .background(Color(0xFF5E4890))
                     .padding(innerpadding)
-            ){
-                Column (
+            ) {
+                Column(
                     modifier = Modifier.background(Color(0xFF5E4890))
-                ){
+                ) {
 
                 }
             }
         }
     }
+}
 
 //    Button(
 //        onClick = { wamViewModel.getWAMData(token = token, navController = navController) },
@@ -155,7 +160,7 @@ fun mainMenu(
 //            text = "logout"
 //        )
 //    }
-}
+//}
 
 //@Preview(showSystemUi = true, showBackground = true)
 //@Composable
