@@ -155,7 +155,7 @@ fun mainMenu(
 //            text = "logout"
 //        )
 //    }
-}
+// }
 
 //@Preview(showSystemUi = true, showBackground = true)
 //@Composable
