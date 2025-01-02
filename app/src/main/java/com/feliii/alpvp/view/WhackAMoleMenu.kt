@@ -30,11 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.uiStates.WAMDataStatusUIState
+import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.WAMViewModel
 
 @Composable
 fun WhackAMoleMenu(
     modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel,
     wamViewModel: WAMViewModel,
     navController: NavHostController,
     token: String,
@@ -44,7 +46,7 @@ fun WhackAMoleMenu(
     var isPlaying = remember { mutableStateOf(false) }
     val song = remember { MediaPlayer.create(context, R.raw.lofi) }
 
-    val dataStatus = wamViewModel.dataStatus
+    val dataStatus = homeViewModel.wamDataStatus
 
     when(dataStatus){
         is WAMDataStatusUIState.Success ->
@@ -153,6 +155,7 @@ fun WhackAMoleMenuPreview() {
         wamViewModel = TODO(),
         navController = TODO(),
         token = TODO(),
-        context = TODO()
+        context = TODO(),
+        homeViewModel = TODO()
     )
 }
