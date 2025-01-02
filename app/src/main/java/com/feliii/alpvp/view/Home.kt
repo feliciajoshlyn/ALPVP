@@ -41,33 +41,7 @@ fun mainMenu(
 
     }else{
         Column {
-            Button(
-                onClick = {homeViewModel.getWAMData(token = token, navController = navController)},
-            ) {
-                Text(
-                    text = "whack a mole menu"
-                )
-                Text(
-                    text = token
-                )
-                Text(
-                    text = username
-                )
-            }
-            Button(
-                onClick = {calendarViewModel.getCalendarData(token = token, navController = navController)}
-            ) {
-                Text(
-                    text = "calendar"
-                )
-            }
-            Button(
-                onClick = {homeViewModel.logoutUser(token, navController)}
-            ) {
-                Text(
-                    text = "logout"
-                )
-            }
+
         }
     }
 
