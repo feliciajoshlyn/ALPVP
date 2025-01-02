@@ -122,7 +122,7 @@ fun mainMenu(
                                 .clip(CircleShape)
                                 .size(48.dp)
                                 .clickable {
-                                    /* logic here... */
+                                    navController.navigate(PagesEnum.TodayMood.name) {}
                                 }
                                 .padding(2.dp)
                         )
