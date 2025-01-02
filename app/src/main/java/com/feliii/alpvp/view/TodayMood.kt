@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
+import com.feliii.alpvp.uiStates.CalendarDetailDataStatusUIState
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
 import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
@@ -70,11 +71,10 @@ fun TodayMood(
 
     LaunchedEffect(calendarDetailViewModel.dataStatus) {
         val dataStatus = calendarDetailViewModel.dataStatus
-        if(dataStatus is StringDataStatusUIState.Failed) {
+        if(dataStatus is CalendarDetailDataStatusUIState.Failed) {
             Toast.makeText(context, dataStatus.errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
-
 
     // Mood list
     val moods = listOf(
