@@ -50,13 +50,13 @@ import com.feliii.alpvp.viewmodel.WAMViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun mainMenu(
-//    modifier: Modifier = Modifier,
-//    wamViewModel: WAMViewModel,
-//    homeViewModel: HomeViewModel,
-//    navController: NavHostController,
-//    token: String,
-//    username: String, //nnti delete
-//    context: Context
+    modifier: Modifier = Modifier,
+    wamViewModel: WAMViewModel,
+    homeViewModel: HomeViewModel,
+    navController: NavHostController,
+    token: String,
+    username: String, //nnti delete
+    context: Context
 ){
     Scaffold (
         bottomBar = {
@@ -125,7 +125,7 @@ fun mainMenu(
     }
 
     Button(
-        onClick = {/*wamViewModel.getWAMData(token = token, navController = navController)*/},
+        onClick = { wamViewModel.getWAMData(token = token, navController = navController) },
     ) {
         Text(
             text = "whack a mole menu"
@@ -133,7 +133,7 @@ fun mainMenu(
     }
     
     Button(
-        onClick = {/*homeViewModel.logoutUser(token, navController)*/}
+        onClick = { homeViewModel.logoutUser(token, navController) }
     ) {
         Text(
             text = "logout"
@@ -141,8 +141,8 @@ fun mainMenu(
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-fun CalendarPreview() {
-    mainMenu()
-}
+//@Preview(showSystemUi = true, showBackground = true)
+//@Composable
+//fun CalendarPreview() {
+//    mainMenu()
+//}
