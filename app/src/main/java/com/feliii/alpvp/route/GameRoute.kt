@@ -68,15 +68,15 @@ fun RelaxGameApp(
 
         composable(route = PagesEnum.Home.name) {
             mainMenu(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .padding(20.dp),
-//                wamViewModel = wamViewModel,
-//                navController = navController,
-//                context = localContext,
-//                token = token.value,
-//                username = username.value,
-//                homeViewModel = homeViewModel
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                wamViewModel = wamViewModel,
+                navController = navController,
+                context = localContext,
+                token = token.value,
+                username = username.value,
+                homeViewModel = homeViewModel
             )
         }
         composable(route = PagesEnum.WhackAMoleMenu.name) {
