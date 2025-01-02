@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +60,7 @@ import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.R
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.uiStates.AuthenticationStatusUIState
+import com.feliii.alpvp.uiStates.AuthenticationUIState
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 
 @Composable
@@ -138,6 +140,7 @@ fun login(
                 .padding(16.dp)
         )
 
+        // Login
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -154,12 +157,13 @@ fun login(
 
             Box(
                 modifier = Modifier
-                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFFD7C4EC))
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp)
                 ) {
+                    // input Username
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Person, contentDescription = "username")
@@ -187,12 +191,16 @@ fun login(
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
 
+                    // input Password textfield
                     TextField(
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = "password")
                         },
                         value = authenticationViewModel.passwordInput,
-                        onValueChange = { authenticationViewModel.changePasswordInput(it) },
+                        onValueChange = {
+                            authenticationViewModel.changePasswordInput(it)
+                            authenticationViewModel.checkLoginForm()
+                        },
                         label = {
                             Text(
                                 text = "Password",
@@ -208,10 +216,20 @@ fun login(
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         visualTransformation = loginUIState.passwordVisibility,
-                        modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth()
+                        modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
+                        trailingIcon = {
+                            Icon (
+                                painter = if (loginUIState.showPassword) painterResource(R.drawable.visibility) else painterResource(R.drawable.visibility_off),
+                                contentDescription = "hide/show password",
+                                modifier = Modifier.clickable {
+                                    authenticationViewModel.changePasswordVisibility()
+                                }
+                            )
+                        },
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
 
+                    // Don't have an account yet? Register
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -225,7 +243,7 @@ fun login(
                         ClickableText(
                             text = AnnotatedString("Register"),
                             onClick = {
-                                // Handle the click and navigate to the register page
+                                // navigate to the register page
                                 authenticationViewModel.resetViewModel()
                                 navController.navigate(PagesEnum.Register.name) {
                                     popUpTo(PagesEnum.Login.name) {
@@ -243,8 +261,10 @@ fun login(
                     }
                     Spacer(modifier = Modifier.padding(bottom = 12.dp))
 
+                    // POST button
                     Button(
                         onClick = { authenticationViewModel.loginUser(navController = navController) },
+                        enabled = loginUIState.buttonEnabled,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF9141E6),
                             disabledContainerColor = Color.Gray, // Background color when disabled
@@ -264,8 +284,8 @@ fun login(
     }
 }
 
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun loginPreview(){
-    login()
-}
+//@Composable
+//@Preview(showBackground = true, showSystemUi = true)
+//fun loginPreview(){
+//    login()
+//}

@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.NetworkInterface
 
 //container is for bengun service, tiap service & repo baru didaftarin di sini
 interface AppContainer {
@@ -29,6 +30,9 @@ interface AppContainer {
 
 class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : AppContainer {
     private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
+
+//    val ipAddress = getDeviceIPAddress()
+//    private val APIBaseURL = "http://$ipAddress:3000/"
 
     private val authenticationRetrofitService: AuthenticationAPIService by lazy {
         val retrofit = initRetrofit()
@@ -85,5 +89,16 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
             .client(client.build())
             .baseUrl(APIBaseURL)
             .build()
+    }
+}
+
+fun getDeviceIPAddress(): String {
+    return try {
+        NetworkInterface.getNetworkInterfaces().asSequence()
+            .flatMap { it.inetAddresses.asSequence() }
+            .firstOrNull { !it.isLoopbackAddress && it.hostAddress.contains(".") }
+            ?.hostAddress ?: "Unknown IP"
+    } catch (e: Exception) {
+        "Error: ${e.localizedMessage}"
     }
 }

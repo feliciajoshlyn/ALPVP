@@ -20,7 +20,6 @@ import com.feliii.alpvp.view.TodayMood
 import com.feliii.alpvp.view.WhackAMoleGame
 import com.feliii.alpvp.view.WhackAMoleMenu
 import com.feliii.alpvp.viewmodel.WAMViewModel
-
 import com.feliii.alpvp.view.login
 import com.feliii.alpvp.view.mainMenu
 import com.feliii.alpvp.view.register
@@ -80,7 +79,8 @@ fun RelaxGameApp(
                 token = token.value,
                 username = username.value,
                 homeViewModel = homeViewModel,
-                calendarViewModel = calendarViewModel
+//                calendarViewModel = CalendarViewModel,
+//                wamViewModel = WAMViewModel
             )
         }
         composable(route = PagesEnum.WhackAMoleMenu.name) {

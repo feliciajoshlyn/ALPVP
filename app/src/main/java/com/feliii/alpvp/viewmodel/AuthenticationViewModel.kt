@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -13,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
+import com.feliii.alpvp.R
 import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
@@ -67,14 +69,31 @@ class AuthenticationViewModel (
         this.confirmPasswordInput = confirmPasswordInput
     }
 
+    fun changePasswordVisibility() {
+        _authenticationUIState.update { currentState ->
+            if (currentState.showPassword) {
+                currentState.copy(
+                    showPassword = false,
+                    passwordVisibility = PasswordVisualTransformation(),
+                )
+            } else {
+                currentState.copy(
+                    showPassword = true,
+                    passwordVisibility = VisualTransformation.None,
+                )
+            }
+        }
+    }
+
     fun checkLoginForm() {
-        if(usernameInput.isNotEmpty() && passwordInput.isNotEmpty()){
+        if (usernameInput.isNotEmpty() && passwordInput.isNotEmpty()) {
             _authenticationUIState.update { currentState ->
                 currentState.copy(
                     buttonEnabled = true
                 )
             }
-        }else{
+        }
+        else {
             _authenticationUIState.update { currentState ->
                 currentState.copy(
                     buttonEnabled = false
@@ -84,27 +103,20 @@ class AuthenticationViewModel (
     }
 
     fun checkRegisterForm() {
-        if(usernameInput.isNotEmpty() && passwordInput.isNotEmpty() && confirmPasswordInput.isNotEmpty()){
+        if (usernameInput.isNotEmpty() && passwordInput.isNotEmpty() && confirmPasswordInput.isNotEmpty()) {
             _authenticationUIState.update { currentState ->
                 currentState.copy(
                     buttonEnabled = true
                 )
             }
-        } else {
+        }
+        else {
             _authenticationUIState.update { currentState ->
                 currentState.copy(
                     buttonEnabled = false
                 )
             }
         }
-    }
-
-    fun checkButtonEnabled(isEnabled: Boolean): Color{
-        if(isEnabled){
-            return Color.Blue
-        }
-
-        return Color.Gray
     }
 
     fun registerUser(navController: NavHostController) {
@@ -129,7 +141,8 @@ class AuthenticationViewModel (
                                     inclusive = true
                                 }
                             }
-                        }else{
+                        }
+                        else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
@@ -148,7 +161,7 @@ class AuthenticationViewModel (
                         dataStatus = AuthenticationStatusUIState.Failed(t.localizedMessage)
                     }
                 })
-            }catch (error: IOException){
+            } catch (error: IOException){
                 dataStatus = AuthenticationStatusUIState.Failed(error.localizedMessage)
                 Log.d("register-error", "REGISTER ERROR: ${error.localizedMessage}")
             }
@@ -180,13 +193,30 @@ class AuthenticationViewModel (
                                 }
                             }
                         } else {
-                            val errorMessage = Gson().fromJson(
-                                res.errorBody()!!.charStream(),
-                                ErrorModel::class.java
-                            )
+                            try {
+                                val errorMessage = Gson().fromJson(
+                                    res.errorBody()!!.charStream(),
+                                    ErrorModel::class.java
+                                )
 
-                            Log.d("error-data", "ERROR DATA: ${errorMessage.errors}")
-                            dataStatus = AuthenticationStatusUIState.Failed(errorMessage.errors)
+                                // Safely handle null errors
+                                val errorText = errorMessage.errors ?: "unknown error occurred"
+
+                                Log.d("error-data", "ERROR DATA: $errorText")
+                                dataStatus = AuthenticationStatusUIState.Failed(errorText)
+
+                            } catch (e: Exception) {
+                                // In case of an error in parsing the error response, provide a fallback message
+                                Log.d("error-data", "Error parsing the error response: ${e.localizedMessage}")
+                                dataStatus = AuthenticationStatusUIState.Failed("An unknown error occurred")
+                            }
+
+//                            val errorMessage = Gson().fromJson(
+//                                res.errorBody()!!.charStream(),
+//                                ErrorModel::class.java
+//                            )
+//                            Log.d("error-data", "ERROR DATA: ${errorMessage.errors}")
+//                            dataStatus = AuthenticationStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
@@ -225,6 +255,8 @@ class AuthenticationViewModel (
         changeConfirmPasswordInput("")
         _authenticationUIState.update { currentState ->
             currentState.copy(
+                showPassword = false,
+                showConfirmPassword = false,
                 passwordVisibility = PasswordVisualTransformation(),
                 buttonEnabled = false
             )
