@@ -193,13 +193,30 @@ class AuthenticationViewModel (
                                 }
                             }
                         } else {
-                            val errorMessage = Gson().fromJson(
-                                res.errorBody()!!.charStream(),
-                                ErrorModel::class.java
-                            )
+                            try {
+                                val errorMessage = Gson().fromJson(
+                                    res.errorBody()!!.charStream(),
+                                    ErrorModel::class.java
+                                )
 
-                            Log.d("error-data", "ERROR DATA: ${errorMessage.errors}")
-                            dataStatus = AuthenticationStatusUIState.Failed(errorMessage.errors)
+                                // Safely handle null errors
+                                val errorText = errorMessage.errors ?: "unknown error occurred"
+
+                                Log.d("error-data", "ERROR DATA: $errorText")
+                                dataStatus = AuthenticationStatusUIState.Failed(errorText)
+
+                            } catch (e: Exception) {
+                                // In case of an error in parsing the error response, provide a fallback message
+                                Log.d("error-data", "Error parsing the error response: ${e.localizedMessage}")
+                                dataStatus = AuthenticationStatusUIState.Failed("An unknown error occurred")
+                            }
+
+//                            val errorMessage = Gson().fromJson(
+//                                res.errorBody()!!.charStream(),
+//                                ErrorModel::class.java
+//                            )
+//                            Log.d("error-data", "ERROR DATA: ${errorMessage.errors}")
+//                            dataStatus = AuthenticationStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 

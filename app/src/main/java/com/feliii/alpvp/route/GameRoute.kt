@@ -79,7 +79,8 @@ fun RelaxGameApp(
                 token = token.value,
                 username = username.value,
                 homeViewModel = homeViewModel,
-                calendarViewModel = calendarViewModel
+//                calendarViewModel = CalendarViewModel,
+//                wamViewModel = WAMViewModel
             )
         }
         composable(route = PagesEnum.WhackAMoleMenu.name) {

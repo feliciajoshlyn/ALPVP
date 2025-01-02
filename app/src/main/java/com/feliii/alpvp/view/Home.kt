@@ -47,6 +47,7 @@ import com.feliii.alpvp.R
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
+import com.feliii.alpvp.viewmodel.CalendarViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.WAMViewModel
 
@@ -54,8 +55,9 @@ import com.feliii.alpvp.viewmodel.WAMViewModel
 @Composable
 fun mainMenu(
     modifier: Modifier = Modifier,
-    wamViewModel: WAMViewModel,
+    //wamViewModel: WAMViewModel,
     homeViewModel: HomeViewModel,
+    //calendarViewModel: CalendarViewModel,
     navController: NavHostController,
     token: String,
     username: String, //nnti delete
