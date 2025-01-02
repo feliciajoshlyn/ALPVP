@@ -95,24 +95,32 @@ fun MoodCalendar(
                     .background(Color(0xFFD7C4EC))
                     .padding(16.dp)
             )
-            Spacer(modifier = Modifier.height(24.dp))
-
-            MonthNavigation(currentMonth, onMonthChange = { newMonth ->
-                currentMonth = newMonth
-                //reset selected date when month changes
-                if (selectedDate.month != newMonth.month) {
-                    selectedDate = LocalDate.now()
-                }
-            })
             Spacer(modifier = Modifier.height(16.dp))
-            CalendarGrid(
-                daysList = daysList,
-                currentMonth = currentMonth,
-                today = today,
-                selectedDate = selectedDate,
-                onDateSelected = { date -> selectedDate = date },
-                dataStatus = dataStatus
-            )
+
+            Column (
+                Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color(0xFFD7C4EC))
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ){
+                MonthNavigation(currentMonth, onMonthChange = { newMonth ->
+                    currentMonth = newMonth
+                    //reset selected date when month changes
+                    if (selectedDate.month != newMonth.month) {
+                        selectedDate = LocalDate.now()
+                    }
+                })
+                Spacer(modifier = Modifier.height(16.dp))
+                CalendarGrid(
+                    daysList = daysList,
+                    currentMonth = currentMonth,
+                    today = today,
+                    selectedDate = selectedDate,
+                    onDateSelected = { date -> selectedDate = date },
+                    dataStatus = dataStatus
+                )
+            }
         }
 
         AddEmotionButton(
@@ -137,6 +145,25 @@ fun CalendarGrid(
     dataStatus: CalendarDataStatusUIState
 ) {
     Column {
+        // Weekday Labels
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            listOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su").forEach { day ->
+                Text(
+                    text = day,
+                    fontSize = 20.sp,
+                    color = Color(0xFF5E4890),
+                    fontFamily = FontFamily(Font(R.font.jua)),
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+
         daysList.chunked(7).forEach { week ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -144,7 +171,19 @@ fun CalendarGrid(
             ) {
                 week.forEach { day ->
                     if (day.isEmpty()) {
-                        Spacer(modifier = Modifier.size(40.dp))
+                        // Empty date square
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .size(40.dp)
+                                .background(Color(0xFFF3EDF9)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "",
+                                fontSize = 20.sp,
+                            )
+                        }
                     } else {
                         val date = LocalDate.of(currentMonth.year, currentMonth.monthValue, day.toInt())
                         val isToday = date == today
@@ -218,10 +257,10 @@ fun AddEmotionButton(
             .offset(y = -20.dp)
             .size(76.dp)
             .background(
-                if (isEnabled) Color.White else Color.Gray, // Use gray background if disabled
+                if (isEnabled) Color.White else Color.Gray,
                 shape = CircleShape
             )
-            .clickable(enabled = isEnabled) { // Disable click if not enabled
+            .clickable(enabled = isEnabled) {
                 calendarDetailViewModel.getCalendarDetailData(
                     navController = navController,
                     date = dateChosen,
@@ -250,11 +289,7 @@ fun MonthNavigation(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color(0xFFD7C4EC))
-            .padding(16.dp)
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(onClick = { onMonthChange(currentMonth.minusMonths(1)) }) {
             Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Color(0xFF5E4890))
