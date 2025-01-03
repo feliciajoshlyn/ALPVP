@@ -222,11 +222,11 @@ fun CalendarGrid(
                                 ){
                                     dayData?.moods?.forEach { mood ->
                                         val emojiResource = when (mood) {
-                                            1 -> R.drawable.happy_emoji
-                                            2 -> R.drawable.chill_emoji
-                                            3 -> R.drawable.neutral_emoji
-                                            4 -> R.drawable.sad_emoji
-                                            5 -> R.drawable.angry_emoji
+                                            0 -> R.drawable.happy_emoji
+                                            1 -> R.drawable.chill_emoji
+                                            2 -> R.drawable.neutral_emoji
+                                            3 -> R.drawable.sad_emoji
+                                            4 -> R.drawable.angry_emoji
                                             else -> null
                                         }
                                         emojiResource?.let { res ->
