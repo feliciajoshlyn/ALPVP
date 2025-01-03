@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.view.FidgetSpinner
 import com.feliii.alpvp.view.MoodCalendar
 import com.feliii.alpvp.view.TodayMood
 import com.feliii.alpvp.view.WhackAMoleGame
@@ -130,6 +131,16 @@ fun RelaxGameApp(
                 navController = navController,
                 context = localContext,
                 calendarDetailViewModel = calendarDetailViewModel,
+                token = token.value
+            )
+        }
+
+        composable(route = PagesEnum.FidgetSpinner.name) {
+            FidgetSpinner(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                navController = navController,
                 token = token.value
             )
         }
