@@ -163,7 +163,7 @@ fun TodayMood(
 
                 // Mood buttons
                 Column {
-                    // Row of Angry, Sad, Happy
+                    // Row of Happy, Chill, Neutral
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround
@@ -183,7 +183,7 @@ fun TodayMood(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Row of Chill, Neutral
+                    // Row of Sad, Angry
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
