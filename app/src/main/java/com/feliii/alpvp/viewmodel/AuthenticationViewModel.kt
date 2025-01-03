@@ -90,12 +90,12 @@ class AuthenticationViewModel (
             if (currentState.showConfirmPassword) {
                 currentState.copy(
                     showConfirmPassword = false,
-                    passwordVisibility = PasswordVisualTransformation(),
+                    confirmPasswordVisibility = PasswordVisualTransformation(),
                 )
             } else {
                 currentState.copy(
                     showConfirmPassword = true,
-                    passwordVisibility = VisualTransformation.None,
+                    confirmPasswordVisibility = VisualTransformation.None,
                 )
             }
         }
