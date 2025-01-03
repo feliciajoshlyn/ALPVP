@@ -55,7 +55,6 @@ import com.feliii.alpvp.viewmodel.WAMViewModel
 @Composable
 fun mainMenu(
     modifier: Modifier = Modifier,
-    //wamViewModel: WAMViewModel,
     homeViewModel: HomeViewModel,
     calendarViewModel: CalendarViewModel,
     navController: NavHostController,
@@ -112,7 +111,7 @@ fun mainMenu(
                                 .clip(CircleShape)
                                 .size(72.dp)
                                 .clickable {
-                                    /* logic here... */
+                                    /* Navigate to Minigame logic here... */
                                 }
                                 .padding(2.dp)
                         )
@@ -132,21 +131,73 @@ fun mainMenu(
                     }
                 }
             }
-        ) { innerpadding ->
+        ) { innerPadding ->
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .background(Color(0xFF5E4890))
-                    .padding(innerpadding)
+                    .padding(innerPadding)
             ) {
                 Column(
-                    modifier = Modifier.background(Color(0xFF5E4890))
+                    modifier = Modifier
+                        .background(Color(0xFF5E4890))
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // Minigame Boxes
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(Color.Red)
+                                .clickable {
+                                    homeViewModel.getWAMData(token, navController)
+                                }
+                        )
 
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(Color.Green, CircleShape)
+                                .clickable {
+                                    // Add logic for second box here
+                                }
+                        )
+                    }
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(Color.Blue, CircleShape)
+                                .clickable {
+                                    // Add logic for third box here
+                                }
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(Color.Yellow, CircleShape)
+                                .clickable {
+                                    // Add logic for fourth box here
+                                }
+                        )
+                    }
                 }
             }
         }
     }
 }
+
 
 //    Button(
 //        onClick = { wamViewModel.getWAMData(token = token, navController = navController) },
