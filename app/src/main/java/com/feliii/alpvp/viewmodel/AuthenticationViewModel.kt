@@ -89,12 +89,12 @@ class AuthenticationViewModel (
         _authenticationUIState.update { currentState ->
             if (currentState.showConfirmPassword) {
                 currentState.copy(
-                    showPassword = false,
+                    showConfirmPassword = false,
                     passwordVisibility = PasswordVisualTransformation(),
                 )
             } else {
                 currentState.copy(
-                    showPassword = true,
+                    showConfirmPassword = true,
                     passwordVisibility = VisualTransformation.None,
                 )
             }
