@@ -251,7 +251,7 @@ fun register(
                             unfocusedIndicatorColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        visualTransformation = PasswordVisualTransformation(),
+                        visualTransformation = registerUIState.confirmPasswordVisibility,
                         modifier = Modifier.clip(RoundedCornerShape(10.dp)).fillMaxWidth(),
                         trailingIcon = {
                             Icon (
