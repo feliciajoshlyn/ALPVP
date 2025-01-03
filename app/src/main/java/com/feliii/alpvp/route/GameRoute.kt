@@ -79,7 +79,7 @@ fun RelaxGameApp(
                 token = token.value,
                 username = username.value,
                 homeViewModel = homeViewModel,
-//                calendarViewModel = CalendarViewModel,
+                calendarViewModel = calendarViewModel,
 //                wamViewModel = WAMViewModel
             )
         }

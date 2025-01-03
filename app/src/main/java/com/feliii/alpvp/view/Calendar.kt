@@ -10,16 +10,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -28,24 +27,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
-import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.uiStates.CalendarDataStatusUIState
 import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -73,6 +68,10 @@ fun MoodCalendar(
         } else {
             ""
         }
+    }
+
+    LaunchedEffect(Unit) {
+        calendarViewModel.getCalendarData(token, navController)
     }
 
     Box(
@@ -189,7 +188,7 @@ fun CalendarGrid(
                         val date = LocalDate.of(currentMonth.year, currentMonth.monthValue, day.toInt())
                         val isToday = date == today
                         val isSelected = date == selectedDate
-                        val dayData = (dataStatus as? CalendarDataStatusUIState.Success)?.data?.find { it.date.equals(date) }
+                        val dayData = (dataStatus as? CalendarDataStatusUIState.Success)?.data?.find { LocalDate.parse(it.date.substring(0, 10)) == date }
 
                         Box(
                             modifier = Modifier
@@ -217,25 +216,26 @@ fun CalendarGrid(
                                     fontFamily = FontFamily(Font(R.font.jua))
                                 )
 
-                                Row (
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically
-                                ){
+                                ) {
                                     dayData?.moods?.forEach { mood ->
-                                        val emojiResource = when (mood) {
-                                            1 -> R.drawable.happy_emoji
-                                            2 -> R.drawable.chill_emoji
-                                            3 -> R.drawable.neutral_emoji
-                                            4 -> R.drawable.sad_emoji
-                                            5 -> R.drawable.angry_emoji
-                                            else -> null
+                                        val moodColor = when (mood) {
+                                            1 -> Color(0xFFFFD700) // Happy - Yellow
+                                            2 -> Color(0xFFADD8E6) // Chill - Light Blue
+                                            3 -> Color(0xFFC0C0C0) // Neutral - Gray
+                                            4 -> Color(0xFF87CEEB) // Sad - Light Blue
+                                            5 -> Color(0xFFFF6347) // Angry - Red
+                                            else -> Color.Transparent
                                         }
-                                        emojiResource?.let { res ->
-                                            Image(
-                                                painter = painterResource(res),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(16.dp)
-                                            )
-                                        }
+                                        Box(
+                                            modifier = Modifier
+                                                .size(6.dp)
+                                                .clip(CircleShape)
+                                                .background(moodColor)
+                                                .padding(end = 2.dp)
+                                        )
                                     }
                                 }
 

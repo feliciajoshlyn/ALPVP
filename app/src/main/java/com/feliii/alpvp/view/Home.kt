@@ -57,7 +57,7 @@ fun mainMenu(
     modifier: Modifier = Modifier,
     //wamViewModel: WAMViewModel,
     homeViewModel: HomeViewModel,
-    //calendarViewModel: CalendarViewModel,
+    calendarViewModel: CalendarViewModel,
     navController: NavHostController,
     token: String,
     username: String, //nnti delete
@@ -124,7 +124,7 @@ fun mainMenu(
                                 .clip(CircleShape)
                                 .size(48.dp)
                                 .clickable {
-                                    navController.navigate(PagesEnum.Calendar.name) {}
+                                    navController.navigate(PagesEnum.Calendar.name)
                                 }
                                 .padding(2.dp)
                         )

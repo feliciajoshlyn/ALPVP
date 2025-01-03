@@ -45,7 +45,7 @@ class CalendarViewModel (
                             dataStatus = CalendarDataStatusUIState.Success(res.body()!!.data)
 
                             Log.d("get-calendar-data", "GET CALENDAR: ${res.body()}")
-                            navController.navigate(PagesEnum.Calendar.name)
+//                            navController.navigate(PagesEnum.Calendar.name)
                         }else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),

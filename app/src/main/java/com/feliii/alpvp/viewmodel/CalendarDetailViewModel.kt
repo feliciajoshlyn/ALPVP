@@ -2,6 +2,7 @@ package com.feliii.alpvp.viewmodel
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -189,56 +190,57 @@ class CalendarDetailViewModel(
 
     fun saveButton(token: String, navController: NavHostController) {
         if(moodChosen.size == 0 && note.equals("")){
-            navController.navigate(PagesEnum.Calendar.name){
-                popUpTo(PagesEnum.Calendar.name){
-                    inclusive = true
+            Toast.makeText(navController.context, "Please enter a note or select at least 1 mood", Toast.LENGTH_SHORT).show()
+            navController.popBackStack()
+        } else if(moodChosen.size == 0){
+            Toast.makeText(navController.context, "Please select at least 1 mood", Toast.LENGTH_SHORT).show()
+        } else {
+            viewModelScope.launch{
+                submissionStatus = StringDataStatusUIState.Loading
+
+
+                Log.d("Entry-form", "TOKEN: ${token}")
+
+                try {
+                    val adjustedMoods = moodChosen.map { it + 1 }
+                    val call = calendarRepository.createOrUpdate(token, dateChosen, note, adjustedMoods)
+
+                    call.enqueue(object : Callback<GeneralResponseModel> {
+                        override fun onResponse(
+                            call: Call<GeneralResponseModel>,
+                            res: Response<GeneralResponseModel>
+                        ) {
+                            if (res.isSuccessful) {
+                                Log.d("json", "JSON RESPONSE: ${res.body()!!.data}")
+                                submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
+
+                                navController.navigate(PagesEnum.Calendar.name) {
+                                    popUpTo(PagesEnum.Calendar.name) {
+                                        inclusive = true
+                                    }
+                                }
+
+                            }else{
+                                val errorMessage = Gson().fromJson(
+                                    res.errorBody()!!.charStream(),
+                                    ErrorModel::class.java
+                                )
+                                submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+                            }
+                        }
+
+                        override fun onFailure(call: Call<GeneralResponseModel>, t: Throwable) {
+                            submissionStatus = StringDataStatusUIState.Failed(t.localizedMessage)
+                        }
+
+                    })
+                }catch (error: IOException){
+                    submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
                 }
             }
         }
 
-        viewModelScope.launch{
-            submissionStatus = StringDataStatusUIState.Loading
 
-
-            Log.d("Entry-form", "TOKEN: ${token}")
-
-            try {
-                val adjustedMoods = moodChosen.map { it + 1 }
-                val call = calendarRepository.createOrUpdate(token, dateChosen, note, adjustedMoods)
-
-                call.enqueue(object : Callback<GeneralResponseModel> {
-                    override fun onResponse(
-                        call: Call<GeneralResponseModel>,
-                        res: Response<GeneralResponseModel>
-                    ) {
-                        if (res.isSuccessful) {
-                            Log.d("json", "JSON RESPONSE: ${res.body()!!.data}")
-                            submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
-
-                            navController.navigate(PagesEnum.Calendar.name) {
-                                popUpTo(PagesEnum.Calendar.name) {
-                                    inclusive = true
-                                }
-                            }
-
-                        }else{
-                            val errorMessage = Gson().fromJson(
-                                res.errorBody()!!.charStream(),
-                                ErrorModel::class.java
-                            )
-                            submissionStatus = StringDataStatusUIState.Failed(errorMessage.errors)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<GeneralResponseModel>, t: Throwable) {
-                        submissionStatus = StringDataStatusUIState.Failed(t.localizedMessage)
-                    }
-
-                })
-            }catch (error: IOException){
-                submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
-            }
-        }
     }
 
 
