@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
+import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.uiStates.CalendarDetailDataStatusUIState
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
 import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
@@ -96,6 +97,24 @@ fun TodayMood(
             .background(Color(0xFF5E4890))
             .padding(24.dp),
     ) {
+        // Back button
+        Image(
+            painter = painterResource(R.drawable.back_button),
+            contentDescription = null,
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(48.dp)
+                .clickable {
+                    navController.navigate(PagesEnum.Calendar.name){
+                        popUpTo(PagesEnum.Calendar.name){
+                            inclusive = true
+                        }
+                    }
+                }
+                .padding(2.dp)
+                .align(Alignment.TopStart)
+        )
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -163,7 +182,7 @@ fun TodayMood(
 
                 // Mood buttons
                 Column {
-                    // Row of Angry, Sad, Happy
+                    // Row of Happy, Chill, Neutral
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround
@@ -183,7 +202,7 @@ fun TodayMood(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Row of Chill, Neutral
+                    // Row of Sad, Angry
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly

@@ -80,6 +80,24 @@ fun MoodCalendar(
             .background(Color(0xFF5E4890))
             .padding(16.dp)
     ) {
+        // Back button
+        Image(
+            painter = painterResource(R.drawable.back_button),
+            contentDescription = null,
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(52.dp)
+                .clickable {
+                    navController.navigate(PagesEnum.Home.name){
+                        popUpTo(PagesEnum.Home.name){
+                            inclusive = true
+                        }
+                    }
+                }
+                .padding(2.dp)
+                .align(Alignment.TopStart)
+        )
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -222,11 +240,11 @@ fun CalendarGrid(
                                 ) {
                                     dayData?.moods?.forEach { mood ->
                                         val moodColor = when (mood) {
-                                            1 -> Color(0xFFFFD700) // Happy - Yellow
-                                            2 -> Color(0xFFADD8E6) // Chill - Light Blue
-                                            3 -> Color(0xFFC0C0C0) // Neutral - Gray
-                                            4 -> Color(0xFF87CEEB) // Sad - Light Blue
-                                            5 -> Color(0xFFFF6347) // Angry - Red
+                                            1 -> Color(0xFFFFD700)
+                                            2 -> Color(0xFFADD8E6)
+                                            3 -> Color(0xFFC0C0C0)
+                                            4 -> Color(0xFF87CEEB)
+                                            5 -> Color(0xFFFF6347)
                                             else -> Color.Transparent
                                         }
                                         Box(
