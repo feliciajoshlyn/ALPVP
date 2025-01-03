@@ -81,6 +81,24 @@ fun MoodCalendar(
             .background(Color(0xFF5E4890))
             .padding(16.dp)
     ) {
+        // Back button
+        Image(
+            painter = painterResource(R.drawable.back_button),
+            contentDescription = null,
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(52.dp)
+                .clickable {
+                    navController.navigate(PagesEnum.Home.name){
+                        popUpTo(PagesEnum.Home.name){
+                            inclusive = true
+                        }
+                    }
+                }
+                .padding(2.dp)
+                .align(Alignment.TopStart)
+        )
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
