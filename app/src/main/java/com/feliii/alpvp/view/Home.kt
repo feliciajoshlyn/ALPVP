@@ -96,7 +96,8 @@ fun mainMenu(
                                 .clip(CircleShape)
                                 .size(48.dp)
                                 .clickable {
-                                    /* logic here... */
+                                    // Sementara logout untuk test
+                                    homeViewModel.logoutUser(token, navController)
                                 }
                                 .padding(2.dp)
                         )
