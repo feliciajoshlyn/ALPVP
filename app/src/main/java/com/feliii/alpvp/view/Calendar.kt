@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -59,17 +60,9 @@ fun MoodCalendar(
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val today = LocalDate.now()
-    val daysInMonth = currentMonth.lengthOfMonth()
-    val firstDayOfMonth = (currentMonth.atDay(1).dayOfWeek.value + 6) % 7
+
     val isFutureDate = selectedDate.isAfter(today)
 
-    val daysList = List(42) { index ->
-        if (index >= firstDayOfMonth && index < firstDayOfMonth + daysInMonth) {
-            (index - firstDayOfMonth + 1).toString()
-        } else {
-            ""
-        }
-    }
 
     LaunchedEffect(Unit) {
         calendarViewModel.getCalendarData(token, navController)
@@ -123,21 +116,17 @@ fun MoodCalendar(
                     .padding(16.dp)
                     .fillMaxWidth()
             ){
-                MonthNavigation(currentMonth, onMonthChange = { newMonth ->
-                    currentMonth = newMonth
-                    //reset selected date when month changes
-                    if (selectedDate.month != newMonth.month) {
-                        selectedDate = LocalDate.now()
-                    }
-                })
+                MonthNavigation(
+                    calendarViewModel = calendarViewModel
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 CalendarGrid(
-                    daysList = daysList,
                     currentMonth = currentMonth,
                     today = today,
                     selectedDate = selectedDate,
                     onDateSelected = { date -> selectedDate = date },
-                    dataStatus = dataStatus
+                    dataStatus = dataStatus,
+                    calendarViewModel = calendarViewModel
                 )
             }
         }
@@ -156,13 +145,15 @@ fun MoodCalendar(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarGrid(
-    daysList: List<String>,
+    calendarViewModel: CalendarViewModel,
     currentMonth: YearMonth,
     today: LocalDate,
     selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
     dataStatus: CalendarDataStatusUIState
 ) {
+    val daysList by calendarViewModel.daysList.collectAsState(emptyList())
+
     Column {
         // Weekday Labels
         Row(
@@ -309,26 +300,25 @@ fun AddEmotionButton(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MonthNavigation(
-    currentMonth: YearMonth,
-    onMonthChange: (YearMonth) -> Unit
+    calendarViewModel: CalendarViewModel,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ) {
-        IconButton(onClick = { onMonthChange(currentMonth.minusMonths(1)) }) {
+        IconButton(onClick = { calendarViewModel.minusMonth() }) {
             Icon(Icons.Default.ArrowBack, contentDescription = null, tint = Color(0xFF5E4890))
         }
 
         Text(
-            text = "${currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.year}",
+            text = "${calendarViewModel.currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${calendarViewModel.currentMonth.year}",
             fontSize = 24.sp,
             color = Color(0xFF5E4890),
             fontFamily = FontFamily(Font(R.font.jua))
         )
 
-        IconButton(onClick = { onMonthChange(currentMonth.plusMonths(1)) }) {
+        IconButton(onClick = { calendarViewModel.plusMonth() }) {
             Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFF5E4890))
         }
     }

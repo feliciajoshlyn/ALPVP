@@ -89,6 +89,14 @@ class WAMViewModel (
     private var moleGenerationJob: Job? = null
     private var timerJob: Job? = null
 
+    var isPlaying by mutableStateOf(false)
+        private set
+
+    var song by mutableStateOf("")
+        private set
+
+
+
 //    fun getWAMData(token: String, navController: NavHostController) {
 //        viewModelScope.launch {
 //            dataStatus = WAMDataStatusUIState.Loading
