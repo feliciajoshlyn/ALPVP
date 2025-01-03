@@ -258,7 +258,7 @@ fun register(
                                 painter = if (registerUIState.showConfirmPassword) painterResource(R.drawable.visibility) else painterResource(R.drawable.visibility_off),
                                 contentDescription = "hide/show password",
                                 modifier = Modifier.clickable {
-                                    authenticationViewModel.changePasswordVisibility()
+                                    authenticationViewModel.changeConfirmPasswordVisibility()
                                 }
                             )
                         },

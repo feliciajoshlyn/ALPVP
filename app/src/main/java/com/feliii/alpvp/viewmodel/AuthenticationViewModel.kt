@@ -85,6 +85,22 @@ class AuthenticationViewModel (
         }
     }
 
+    fun changeConfirmPasswordVisibility() {
+        _authenticationUIState.update { currentState ->
+            if (currentState.showConfirmPassword) {
+                currentState.copy(
+                    showPassword = false,
+                    passwordVisibility = PasswordVisualTransformation(),
+                )
+            } else {
+                currentState.copy(
+                    showPassword = true,
+                    passwordVisibility = VisualTransformation.None,
+                )
+            }
+        }
+    }
+
     fun checkLoginForm() {
         if (usernameInput.isNotEmpty() && passwordInput.isNotEmpty()) {
             _authenticationUIState.update { currentState ->
@@ -124,49 +140,57 @@ class AuthenticationViewModel (
             dataStatus = AuthenticationStatusUIState.Loading
 
             try {
-                val call = authenticationRepository.register(usernameInput, passwordInput)
+                if (confirmPasswordInput != passwordInput){
+                    Log.d("RegisterUser", "Password and confirm password does not match.")
+                    dataStatus =  AuthenticationStatusUIState.Failed("Password and confirm password does not match.")
+                }
+                else {
+                    val call = authenticationRepository.register(usernameInput, passwordInput)
 
-                call.enqueue(object: Callback<UserResponse>{
-                    override fun onResponse(call: Call<UserResponse>, res: Response<UserResponse>) {
-                        if(res.isSuccessful){
-                            Log.d("response-data", "RESPONSE DATA: ${res.body()}")
+                    call.enqueue(object : Callback<UserResponse> {
+                        override fun onResponse(call: Call<UserResponse>, res: Response<UserResponse>) {
+                            if (res.isSuccessful && res.body() != null) {
+                                val userData = res.body()!!.data
 
-                            saveUsernameToken(res.body()!!.data.username, res.body()!!.data.token!!)
-                            dataStatus = AuthenticationStatusUIState.Success(res.body()!!.data)
+                                saveUsernameToken(userData.username, userData.token ?: "")
+                                dataStatus = AuthenticationStatusUIState.Success(userData)
 
-                            resetViewModel()
+                                resetViewModel()
 
-                            navController.navigate(PagesEnum.Home.name) {
-                                popUpTo(PagesEnum.Login.name) {
-                                    inclusive = true
+                                // Navigate to Home after successful registration
+                                navController.navigate(PagesEnum.Home.name) {
+                                    popUpTo(PagesEnum.Login.name) {
+                                        inclusive = true
+                                    }
                                 }
+                            } else {
+                                // Handle error response
+                                val errorMessage = try {
+                                    res.errorBody()?.charStream()?.let {
+                                        Gson().fromJson(it, ErrorModel::class.java)
+                                    }?.errors ?: "Username already exist"
+                                } catch (e: Exception) {
+                                    "Error parsing response: ${e.localizedMessage}"
+                                }
+
+                                Log.d("RegisterUser", "Registration failed: $errorMessage")
+                                dataStatus = AuthenticationStatusUIState.Failed(errorMessage)
                             }
                         }
-                        else {
-                            val errorMessage = Gson().fromJson(
-                                res.errorBody()!!.charStream(),
-                                ErrorModel::class.java
-                            )
 
-                            Log.d("error-data", "ERROR DATA: ${errorMessage}")
-                            dataStatus = AuthenticationStatusUIState.Failed(errorMessage.errors)
+                        override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                            Log.d("RegisterUser", "Network failure: ${t.localizedMessage}")
+                            dataStatus = AuthenticationStatusUIState.Failed("Network error: ${t.localizedMessage}")
                         }
-                    }
-
-                    override fun onFailure(
-                        call: Call<UserResponse>,
-                        t: Throwable
-                    ) {
-                        Log.d("error-data", "ERROR DATA ${t.localizedMessage}")
-                        dataStatus = AuthenticationStatusUIState.Failed(t.localizedMessage)
-                    }
-                })
-            } catch (error: IOException){
-                dataStatus = AuthenticationStatusUIState.Failed(error.localizedMessage)
-                Log.d("register-error", "REGISTER ERROR: ${error.localizedMessage}")
+                    })
+                }
+            } catch (error: IOException) {
+                dataStatus = AuthenticationStatusUIState.Failed("IOException: ${error.localizedMessage}")
+                Log.d("RegisterUser", "IOException during registration: ${error.localizedMessage}")
             }
         }
     }
+
 
     fun loginUser(
         navController: NavHostController
@@ -199,24 +223,14 @@ class AuthenticationViewModel (
                                     ErrorModel::class.java
                                 )
 
-                                // Safely handle null errors
-                                val errorText = errorMessage.errors ?: "unknown error occurred"
-
-                                Log.d("error-data", "ERROR DATA: $errorText")
-                                dataStatus = AuthenticationStatusUIState.Failed(errorText)
+                                Log.d("error-data", "Invalid username or password")
+                                dataStatus = AuthenticationStatusUIState.Failed("Invalid username or password")
 
                             } catch (e: Exception) {
                                 // In case of an error in parsing the error response, provide a fallback message
                                 Log.d("error-data", "Error parsing the error response: ${e.localizedMessage}")
                                 dataStatus = AuthenticationStatusUIState.Failed("An unknown error occurred")
                             }
-
-//                            val errorMessage = Gson().fromJson(
-//                                res.errorBody()!!.charStream(),
-//                                ErrorModel::class.java
-//                            )
-//                            Log.d("error-data", "ERROR DATA: ${errorMessage.errors}")
-//                            dataStatus = AuthenticationStatusUIState.Failed(errorMessage.errors)
                         }
                     }
 
