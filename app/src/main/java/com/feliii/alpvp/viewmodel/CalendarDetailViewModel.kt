@@ -2,6 +2,7 @@ package com.feliii.alpvp.viewmodel
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -70,7 +71,6 @@ class CalendarDetailViewModel(
         }
     }
 
-
     fun getCalendarDetailData(token: String,navController: NavHostController, date: String) {
         viewModelScope.launch {
             dataStatus = CalendarDetailDataStatusUIState.Loading
@@ -114,17 +114,13 @@ class CalendarDetailViewModel(
             }
         }
     }
-
-
     fun saveButton(token: String, navController: NavHostController) {
-        if(moodChosen.size == 0 || note.equals("")){
-            navController.navigate(PagesEnum.Calendar.name){
-                popUpTo(PagesEnum.Calendar.name){
-                    inclusive = true
-                }
-            }
-        }
-        else {
+        if(moodChosen.size == 0 && note.equals("")){
+            Toast.makeText(navController.context, "Please enter a note or select at least 1 mood", Toast.LENGTH_SHORT).show()
+            navController.popBackStack()
+        } else if(moodChosen.size == 0){
+            Toast.makeText(navController.context, "Please select at least 1 mood", Toast.LENGTH_SHORT).show()
+        } else {
             viewModelScope.launch{
                 submissionStatus = StringDataStatusUIState.Loading
 
@@ -242,6 +238,7 @@ class CalendarDetailViewModel(
 //            }
 //        }
 //    }
+
 
 
 
