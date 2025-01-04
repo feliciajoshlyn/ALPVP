@@ -134,15 +134,5 @@ fun RelaxGameApp(
                 token = token.value
             )
         }
-
-        composable(route = PagesEnum.FidgetSpinner.name) {
-            FidgetSpinner(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-                navController = navController,
-                token = token.value
-            )
-        }
     }
 }
