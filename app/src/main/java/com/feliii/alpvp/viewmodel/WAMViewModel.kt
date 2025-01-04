@@ -1,5 +1,9 @@
 package com.feliii.alpvp.viewmodel
 
+import android.content.Context
+import com.feliii.alpvp.R
+
+import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.mutableStateOf
@@ -89,55 +93,70 @@ class WAMViewModel (
     private var moleGenerationJob: Job? = null
     private var timerJob: Job? = null
 
-    var isPlaying by mutableStateOf(false)
+    var chosenSong by mutableStateOf(Song("Burrow Bliss", R.raw.burrowbliss))
         private set
 
-    var song by mutableStateOf("")
-        private set
+    fun setChosenSong(songName: String){
+        for(song in songList){
+            if(song.name == songName) {
+                chosenSong = song
+                return
+            }
+        }
+    }
 
+    val songList = listOf(
+        Song("Burrow Bliss", R.raw.burrowbliss),
+        Song("Burrow Bliss V2", R.raw.burrowblissv2),
+        Song("Mole's Calm", R.raw.molescalm),
+        Song("Mole's Calm V2", R.raw.molescalmv2),
+        Song("Quiet Burrows", R.raw.quietburrows)
+    )
 
+    private var mediaPlayer: MediaPlayer? = null
 
-//    fun getWAMData(token: String, navController: NavHostController) {
-//        viewModelScope.launch {
-//            dataStatus = WAMDataStatusUIState.Loading
-//
-//            try{
-//                val call = wamRepository.getWAMData(token)
-//
-//                call.enqueue(object: Callback<GetWAMResponse> {
-//                    override fun onResponse(
-//                        call: Call<GetWAMResponse>,
-//                        res: Response<GetWAMResponse>
-//                    ) {
-//                        if(res.isSuccessful) {
-//                            dataStatus = WAMDataStatusUIState.Success(res.body()!!.data)
-//
-//                            Log.d("get-wam-data", "GET WAM: ${res.body()}")
-//
-//                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
-//                                popUpTo(PagesEnum.Home.name) {
-//                                    inclusive = true
-//                                }
-//                            }
-//                        }else {
-//                            val errorMessage = Gson().fromJson(
-//                                res.errorBody()!!.charStream(),
-//                                ErrorModel::class.java
-//                            )
-//
-//                            dataStatus = WAMDataStatusUIState.Failed(errorMessage.errors)
-//                        }
-//                    }
-//
-//                    override fun onFailure(call: Call<GetWAMResponse?>, t: Throwable) {
-//                        dataStatus = WAMDataStatusUIState.Failed(t.localizedMessage)
-//                    }
-//                })
-//            }catch(error: IOException) {
-//                dataStatus = WAMDataStatusUIState.Failed(error.localizedMessage)
-//            }
-//        }
-//    }
+    fun startSong(context: Context) {
+        stopSong()
+        mediaPlayer = MediaPlayer.create(context, chosenSong.id).apply {
+            start()
+        }
+    }
+
+    fun stopSong(){
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    fun onToggleSong(){
+        if(mediaPlayer == null){
+            return
+        }
+        if(isPlaying()){
+            mediaPlayer!!.stop()
+        }else{
+            mediaPlayer!!.start()
+        }
+    }
+
+    fun isPlaying(): Boolean {
+        return mediaPlayer?.isPlaying == true
+    }
+
+    fun skipSong(context: Context){
+        val index = songList.indexOf(chosenSong)
+        if(index == songList.size - 1){
+            chosenSong = songList[0]
+        }else {
+            chosenSong = songList[index + 1]
+        }
+        startSong(context)
+    }
+
+    fun leaveMenu(token: String){
+        updateWAMData(token, getWAM = {})
+        stopSong()
+    }
 
     fun updateWAMData(token: String, getWAM: () -> Unit) {
         viewModelScope.launch {
@@ -295,3 +314,8 @@ class WAMViewModel (
         stopGame()
     }
 }
+
+data class Song(
+    val name : String,
+    val id : Int
+)

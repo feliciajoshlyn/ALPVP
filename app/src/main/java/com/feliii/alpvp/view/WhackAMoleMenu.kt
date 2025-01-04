@@ -49,14 +49,17 @@ fun WhackAMoleMenu(
     token: String,
     context: Context
 ) {
-    val context = LocalContext.current
+    val currentSong = wamViewModel.song
+    val isMuted = wamViewModel.isMuted
     var isPlaying = remember { mutableStateOf(false) }
-    val song = remember { MediaPlayer.create(context, R.raw.lofi) }
+    val song = remember { MediaPlayer.create(context, R.raw.burrowbliss) }
 
     val dataStatus = homeViewModel.wamDataStatus
 
+
     when (dataStatus) {
         is WAMDataStatusUIState.Success -> {
+            wamViewModel.setChosenSong(dataStatus.data.song_chosen)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -167,6 +170,13 @@ fun WhackAMoleMenu(
                 }
 
                 Spacer(modifier = Modifier.weight(1f)) // Push content up from the bottom
+
+                MusicPlayerBar(
+                    currentSong = currentSong,
+                    isMuted = isMuted,
+                    onSkip = {wamViewModel.skipSong()},
+                    onMuteToggle = { wamViewModel.mute() }
+                )
             }
         }
 
