@@ -187,16 +187,72 @@ fun RelaxGameApp(
         }
 
         composable(route = PagesEnum.Calendar.name) {
-            MoodCalendar(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-                navController = navController,
-                context = localContext,
-                calendarViewModel = calendarViewModel,
-                calendarDetailViewModel = calendarDetailViewModel,
-                token = token.value
-            )
+            Scaffold(
+                bottomBar = {
+                    BottomAppBar(
+                        modifier = Modifier.height(96.dp),
+                        containerColor = Color(0xFF8871CA) //Blue Marguerite
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // User bottom navbar
+                            Image(
+                                painter = painterResource(R.drawable.user_personoutline),
+                                contentDescription = "user",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(48.dp)
+                                    .clickable {
+                                        /* logic here... */
+                                    }
+                                    .padding(2.dp)
+                            )
+
+                            // Minigame bottom navbar
+                            Image(
+                                painter = painterResource(R.drawable.minigame_window),
+                                contentDescription = "Minigame",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(72.dp)
+                                    .clickable {
+                                        navController.navigate(PagesEnum.Home.name) {
+                                            popUpTo(PagesEnum.Home.name) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+                                    .padding(2.dp)
+                            )
+
+                            // Mood Calendar bottom navbar
+                            Image(
+                                painter = painterResource(R.drawable.calendar_month),
+                                contentDescription = "calendar",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF644E96))
+                                    .size(48.dp)
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+                }
+            ) { innerpadding ->
+                MoodCalendar(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerpadding),
+                    navController = navController,
+                    context = localContext,
+                    calendarViewModel = calendarViewModel,
+                    calendarDetailViewModel = calendarDetailViewModel,
+                    token = token.value
+                )
+            }
         }
 
         composable(route = PagesEnum.TodayMood.name) {
