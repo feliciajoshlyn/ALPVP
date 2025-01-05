@@ -121,7 +121,6 @@ fun MoodCalendar(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 CalendarGrid(
-                    currentMonth = currentMonth,
                     today = today,
                     selectedDate = selectedDate,
                     onDateSelected = { date -> selectedDate = date },
@@ -133,10 +132,10 @@ fun MoodCalendar(
 
         AddEmotionButton(
             calendarDetailViewModel = calendarDetailViewModel,
-            dateChosen = selectedDate.toString(),
+            dateChosen = calendarViewModel.selectedDate.toString(),
             navController = navController,
             token = token,
-            isEnabled = !isFutureDate,
+            isEnabled = !calendarViewModel.checkFutureDate(),
             modifier = Modifier.align(Alignment.BottomEnd)
         )
     }
@@ -146,7 +145,6 @@ fun MoodCalendar(
 @Composable
 fun CalendarGrid(
     calendarViewModel: CalendarViewModel,
-    currentMonth: YearMonth,
     today: LocalDate,
     selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
@@ -195,9 +193,9 @@ fun CalendarGrid(
                             )
                         }
                     } else {
-                        val date = LocalDate.of(currentMonth.year, currentMonth.monthValue, day.toInt())
+                        val date = LocalDate.of(calendarViewModel.currentMonth.year, calendarViewModel.currentMonth.monthValue, day.toInt())
                         val isToday = date == today
-                        val isSelected = date == selectedDate
+                        val isSelected = date == calendarViewModel.selectedDate
                         val dayData = (dataStatus as? CalendarDataStatusUIState.Success)?.data?.find { LocalDate.parse(it.date.substring(0, 10)) == date }
 
                         Box(
@@ -205,7 +203,7 @@ fun CalendarGrid(
                                 .clip(RoundedCornerShape(12.dp))
                                 .size(40.dp)
                                 .background(if (isToday) Color(0xFFFFE082) else Color.White)
-                                .clickable { onDateSelected(date) }
+                                .clickable { calendarViewModel.selectDate(date) }
                                 .then(
                                     if (isSelected) {
                                         Modifier.border(

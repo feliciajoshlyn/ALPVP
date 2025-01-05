@@ -117,6 +117,7 @@ class WAMViewModel (
 
     fun startSong(context: Context) {
         stopSong()
+        boolIsPlaying = true
         mediaPlayer = MediaPlayer.create(context, chosenSong.id).apply {
             start()
         }
@@ -129,19 +130,22 @@ class WAMViewModel (
     }
 
     fun onToggleSong(){
+        boolIsPlaying = !boolIsPlaying
         if(mediaPlayer == null){
             return
         }
         if(isPlaying()){
-            mediaPlayer!!.stop()
+            mediaPlayer?.pause()
         }else{
-            mediaPlayer!!.start()
+            mediaPlayer?.start()
         }
     }
 
     fun isPlaying(): Boolean {
         return mediaPlayer?.isPlaying == true
     }
+
+    var boolIsPlaying by mutableStateOf(true)
 
     fun skipSong(context: Context){
         val index = songList.indexOf(chosenSong)
@@ -153,8 +157,7 @@ class WAMViewModel (
         startSong(context)
     }
 
-    fun leaveMenu(token: String){
-        updateWAMData(token, getWAM = {})
+    fun leaveMenu(){
         stopSong()
     }
 
@@ -242,6 +245,7 @@ class WAMViewModel (
         moleGenerationJob = viewModelScope.launch {
             while(isActive && (timeRemaining > 0 || !isTimedMode)){
                 delay(moleAppearanceDelay)
+                mole_image_id = R.drawable.mole
                 activeMole = (0 until gridSize*gridSize).random()
             }
         }
@@ -268,9 +272,12 @@ class WAMViewModel (
     fun onMoleClick(index: Int){
         if(index == activeMole) {
             score++
+            mole_image_id = R.drawable.mole_hit
             activeMole = -1
         }
     }
+
+    var mole_image_id by mutableStateOf(R.drawable.mole)
 
     fun stopGame(){
         moleGenerationJob?.cancel()

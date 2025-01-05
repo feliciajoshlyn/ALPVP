@@ -63,8 +63,8 @@ class CalendarViewModel(
     var isFutureDate by mutableStateOf(false)
         private set
 
-    fun checkFutureDate(date: LocalDate) {
-        isFutureDate = date.isAfter(LocalDate.now())
+    fun checkFutureDate(): Boolean {
+        return selectedDate.isAfter(LocalDate.now())
     }
 
     private fun updateDaysList() {

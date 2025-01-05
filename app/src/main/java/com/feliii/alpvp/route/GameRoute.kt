@@ -105,7 +105,6 @@ fun RelaxGameApp(
                 wamViewModel = wamViewModel,
                 token = token.value,
                 homeViewModel = homeViewModel,
-                gameMode = ""
             )
         }
 
