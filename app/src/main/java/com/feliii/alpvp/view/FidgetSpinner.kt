@@ -39,6 +39,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
 import com.feliii.alpvp.viewmodel.FidgetSpinnerViewModel
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ import kotlin.math.hypot
 
 @Composable
 fun FidgetSpinner(
+    navController: NavHostController,
     fsViewModel: FidgetSpinnerViewModel
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -162,11 +164,8 @@ fun FidgetSpinner(
     }
 }
 
-
-
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun FSPreview() {
-    FidgetSpinner(FidgetSpinnerViewModel())
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//fun FSPreview() {
+//    FidgetSpinner(FidgetSpinnerViewModel())
+//}

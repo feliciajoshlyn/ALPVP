@@ -27,6 +27,7 @@ import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
+import com.feliii.alpvp.viewmodel.FidgetSpinnerViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,6 +37,7 @@ fun RelaxGameApp(
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory),
     wamViewModel: WAMViewModel = viewModel(factory = WAMViewModel.Factory),
+    fsViewModel: FidgetSpinnerViewModel = viewModel(factory = FidgetSpinnerViewModel.Factory),
     calendarViewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.Factory),
     calendarDetailViewModel: CalendarDetailViewModel = viewModel(factory = CalendarDetailViewModel.Factory)
 ){
@@ -107,6 +109,13 @@ fun RelaxGameApp(
                 token = token.value,
                 homeViewModel = homeViewModel,
                 gameMode = ""
+            )
+        }
+
+        composable(route = PagesEnum.FidgetSpinner.name) {
+            FidgetSpinner(
+                navController = navController,
+                fsViewModel = fsViewModel
             )
         }
 

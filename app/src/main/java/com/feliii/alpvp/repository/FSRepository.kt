@@ -1,5 +1,6 @@
 package com.feliii.alpvp.repository
 
+import com.feliii.alpvp.model.FidgetSpinnerScoreUpdate
 import com.feliii.alpvp.model.FidgetSpinnerUpdateRequest
 import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.model.GetFSResponse
@@ -15,12 +16,12 @@ interface FSRepository {
 
 class NetworkFSSettingRepository(
     private val fsAPIService: FSAPIService
-): FSRepository {
+) : FSRepository {
     override fun getFSData(token: String): Call<GetFSResponse> {
         return fsAPIService.getFSData(token)
     }
 
-    override suspend fun updateFSSettingData  (
+    override suspend fun updateFSSettingData(
         token: String,
         spinner_chosen: Int,
         music_chosen: Int
@@ -31,13 +32,10 @@ class NetworkFSSettingRepository(
         )
     }
 
-    override suspend fun updateFSScoreData  (
+    override suspend fun updateFSScoreData(
         token: String,
         spins_score: Int
     ): Call<GeneralResponseModel> {
-        return fsAPIService.updateFSSetting(
-            token,
-            FidgetSpinnerUpdateRequest(spins_score)
-        )
+        return fsAPIService.updateFSScore(token, FidgetSpinnerScoreUpdate(spins_score))
     }
 }

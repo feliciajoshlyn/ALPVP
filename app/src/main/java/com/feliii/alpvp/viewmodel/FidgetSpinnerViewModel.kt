@@ -6,18 +6,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
+import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
 import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.model.GetFSResponse
-import com.feliii.alpvp.model.GetWAMResponse
 import com.feliii.alpvp.repository.FSRepository
 import com.feliii.alpvp.uiStates.FSDataStatusUIState
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
-import com.feliii.alpvp.uiStates.WAMDataStatusUIState
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -166,6 +169,16 @@ class FidgetSpinnerViewModel(
                 })
             } catch (error: IOException) {
                 submissionStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+            }
+        }
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as RelaxGameApplication)
+                val fsRepository = application.container.fsRepository
+                FidgetSpinnerViewModel(fsRepository)
             }
         }
     }
