@@ -48,7 +48,8 @@ fun FidgetSpinner() {
     val coroutineScope = rememberCoroutineScope()
     val rotation = remember { Animatable(0f) }
     val score = remember { mutableStateOf(0) }
-    val previousRotation = remember { mutableStateOf(0f) } // Tracks previous rotation value
+    val previousRotation = remember { mutableStateOf(0f) }
+    var velocity by remember { mutableStateOf(0f) } // Velocity of the spinner
 
     val stateZ = rememberTransformableState { _, _, rotationChange ->
         coroutineScope.launch {
@@ -76,18 +77,15 @@ fun FidgetSpinner() {
                 .offset(x = 10.dp)
         )
 
-        // Display score
-        Box(
+        // Spins score display
+        Text(
+            text = "Score: ${score.value}",
+            color = Color.White,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .background(Color.Black, shape = RoundedCornerShape(8.dp))
                 .padding(8.dp)
-        ) {
-            Text(
-                text = "Score: ${score.value}",
-                color = Color.White
-            )
-        }
+        )
 
         // Back button
         Image(
@@ -98,28 +96,28 @@ fun FidgetSpinner() {
                 .align(Alignment.TopStart)
         )
 
-        // Rotating Box with Image as Background
+        // Rotating Box
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .graphicsLayer(rotationZ = rotation.value % 360) // Keep within 0–360 for display
+                .graphicsLayer(rotationZ = rotation.value % 360)
                 .transformable(stateZ)
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
                             coroutineScope.launch {
-                                // Reset previous rotation for decay tracking
+                                // Reset previousRotation for decay tracking
                                 previousRotation.value = rotation.value
 
-                                // Decay animation
                                 rotation.animateDecay(
-                                    initialVelocity = 500f, // Adjust spin speed
+                                    initialVelocity = velocity + 50f, // Spin speed
                                     animationSpec = exponentialDecay(frictionMultiplier = 0.1f)
                                 ) {
-                                    // Track spins during decay (clockwise and counterclockwise)
+                                    // Track spins during decay
                                     val currentRotation = rotation.value
                                     val fullRotations = (currentRotation / 360).toInt() - (previousRotation.value / 360).toInt()
-                                    score.value += fullRotations // Increment or decrement score based on direction
+
+                                    score.value += fullRotations
                                     previousRotation.value = currentRotation
                                 }
                             }
@@ -133,18 +131,18 @@ fun FidgetSpinner() {
                         },
                         onDragEnd = {
                             coroutineScope.launch {
-                                // Reset previous rotation for decay tracking
+                                // Reset previousRotation for decay tracking
                                 previousRotation.value = rotation.value
 
-                                // Decay animation
                                 rotation.animateDecay(
-                                    initialVelocity = 400f,
-                                    animationSpec = exponentialDecay(frictionMultiplier = 0.05f)
+                                    initialVelocity = velocity,
+                                    animationSpec = exponentialDecay(frictionMultiplier = 0.08f)
                                 ) {
-                                    // Track spins during decay (clockwise and counterclockwise)
+                                    // Track spins during decay
                                     val currentRotation = rotation.value
                                     val fullRotations = (currentRotation / 360).toInt() - (previousRotation.value / 360).toInt()
-                                    score.value += fullRotations // Increment or decrement score based on direction
+
+                                    score.value += fullRotations
                                     previousRotation.value = currentRotation
                                 }
                             }
@@ -152,10 +150,11 @@ fun FidgetSpinner() {
                         onDrag = { change, dragAmount ->
                             change.consume()
 
-                            // Calculate drag angle based on horizontal and vertical deltas
-                            val rotationDelta = dragAmount.x - dragAmount.y
+                            // Calculate drag angle
+                            val distance =  (dragAmount.x - dragAmount.y) * 3
+                            velocity = distance // Update velocity based on drag speed
                             coroutineScope.launch {
-                                rotation.snapTo(rotation.value + rotationDelta * 0.2f) // Adjust sensitivity for smoothness
+                                rotation.snapTo(rotation.value + distance * 0.1f) // Update the rotation instantly
                             }
                         }
                     )
