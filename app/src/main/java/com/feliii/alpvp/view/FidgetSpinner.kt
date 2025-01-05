@@ -40,20 +40,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.feliii.alpvp.R
+import com.feliii.alpvp.viewmodel.FidgetSpinnerViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 import kotlin.math.hypot
 
 @Composable
-fun FidgetSpinner() {
+fun FidgetSpinner(
+    fsViewModel: FidgetSpinnerViewModel
+) {
     val coroutineScope = rememberCoroutineScope()
-    val rotation = remember { Animatable(0f) }
-    val score = remember { mutableStateOf(0) }
-    val previousRotation = remember { mutableStateOf(0f) }
-    var velocity by remember { mutableStateOf(0f) } // Velocity of the spinner
+    var rotation = fsViewModel.rotation
 
     val stateZ = rememberTransformableState { _, _, rotationChange ->
         coroutineScope.launch {
-            rotation.snapTo(rotation.value + rotationChange)
+            fsViewModel.updateRotation(rotationChange)
         }
     }
 
@@ -61,25 +62,27 @@ fun FidgetSpinner() {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .paint(
-                painter = painterResource(R.drawable.wood_fsbackground),
+            .paint( //Background
+                painter = painterResource(fsViewModel.backgroundImageResource),
                 alignment = Alignment.Center,
                 contentScale = ContentScale.FillBounds
             )
     ) {
-        // Background
-        Image(
-            painter = painterResource(R.drawable.conpass),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxSize()
-                .offset(x = 10.dp)
-        )
+        // Back item image
+        if (fsViewModel.backItemImageResource != 0){
+            Image(
+                painter = painterResource(fsViewModel.backItemImageResource),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxSize()
+                    .offset(x = 10.dp)
+            )
+        }
 
         // Spins score display
         Text(
-            text = "Score: ${score.value}",
+            text = "Score: ${fsViewModel.score}",
             color = Color.White,
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -106,19 +109,13 @@ fun FidgetSpinner() {
                     detectTapGestures(
                         onTap = {
                             coroutineScope.launch {
-                                // Reset previousRotation for decay tracking
-                                previousRotation.value = rotation.value
+                                fsViewModel.resetPrDecayTrack()
 
                                 rotation.animateDecay(
-                                    initialVelocity = velocity + 50f, // Spin speed
+                                    initialVelocity = fsViewModel.velocity + 50f, // Spin speed
                                     animationSpec = exponentialDecay(frictionMultiplier = 0.1f)
                                 ) {
-                                    // Track spins during decay
-                                    val currentRotation = rotation.value
-                                    val fullRotations = (currentRotation / 360).toInt() - (previousRotation.value / 360).toInt()
-
-                                    score.value += fullRotations
-                                    previousRotation.value = currentRotation
+                                    fsViewModel.trackSpinDuringDecay()
                                 }
                             }
                         }
@@ -131,19 +128,13 @@ fun FidgetSpinner() {
                         },
                         onDragEnd = {
                             coroutineScope.launch {
-                                // Reset previousRotation for decay tracking
-                                previousRotation.value = rotation.value
+                                fsViewModel.resetPrDecayTrack()
 
                                 rotation.animateDecay(
-                                    initialVelocity = velocity,
+                                    initialVelocity = fsViewModel.velocity,
                                     animationSpec = exponentialDecay(frictionMultiplier = 0.08f)
                                 ) {
-                                    // Track spins during decay
-                                    val currentRotation = rotation.value
-                                    val fullRotations = (currentRotation / 360).toInt() - (previousRotation.value / 360).toInt()
-
-                                    score.value += fullRotations
-                                    previousRotation.value = currentRotation
+                                   fsViewModel.trackSpinDuringDecay()
                                 }
                             }
                         },
@@ -151,10 +142,11 @@ fun FidgetSpinner() {
                             change.consume()
 
                             // Calculate drag angle
-                            val distance =  (dragAmount.x - dragAmount.y) * 3
-                            velocity = distance // Update velocity based on drag speed
+                            val distance =  (dragAmount.x - dragAmount.y) * 3 // x - y means it can rotated both clockwise and vice versa
+                            fsViewModel.updateVelocityAsDistance(distance)
+
                             coroutineScope.launch {
-                                rotation.snapTo(rotation.value + distance * 0.1f) // Update the rotation instantly
+                                fsViewModel.rotationSnapTo_Update(distance)
                             }
                         }
                     )
@@ -162,7 +154,7 @@ fun FidgetSpinner() {
                 .size(320.dp)
         ) {
             Image(
-                painter = painterResource(R.drawable.conpassarrow),
+                painter = painterResource(R.drawable.fidgetspinner),
                 contentDescription = null,
                 modifier = Modifier.size(360.dp)
             )
@@ -175,6 +167,6 @@ fun FidgetSpinner() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun MainMenuPreview() {
-    FidgetSpinner()
+fun FSPreview() {
+    FidgetSpinner(FidgetSpinnerViewModel())
 }
