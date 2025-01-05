@@ -57,12 +57,8 @@ fun MoodCalendar(
     context: Context
 ) {
     val dataStatus = calendarViewModel.dataStatus
+
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    val today = LocalDate.now()
-
-    val isFutureDate = selectedDate.isAfter(today)
-
 
     LaunchedEffect(Unit) {
         calendarViewModel.getCalendarData(token, navController)
@@ -104,9 +100,7 @@ fun MoodCalendar(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 CalendarGrid(
-                    today = today,
-                    selectedDate = selectedDate,
-                    onDateSelected = { date -> selectedDate = date },
+
                     dataStatus = dataStatus,
                     calendarViewModel = calendarViewModel
                 )
@@ -128,9 +122,6 @@ fun MoodCalendar(
 @Composable
 fun CalendarGrid(
     calendarViewModel: CalendarViewModel,
-    today: LocalDate,
-    selectedDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit,
     dataStatus: CalendarDataStatusUIState
 ) {
     val daysList by calendarViewModel.daysList.collectAsState(emptyList())
@@ -177,7 +168,7 @@ fun CalendarGrid(
                         }
                     } else {
                         val date = LocalDate.of(calendarViewModel.currentMonth.year, calendarViewModel.currentMonth.monthValue, day.toInt())
-                        val isToday = date == today
+                        val isToday = date == calendarViewModel.today
                         val isSelected = date == calendarViewModel.selectedDate
                         val dayData = (dataStatus as? CalendarDataStatusUIState.Success)?.data?.find { LocalDate.parse(it.date.substring(0, 10)) == date }
 

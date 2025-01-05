@@ -106,13 +106,7 @@ fun mainMenu(
                             modifier = Modifier.clip(RoundedCornerShape(20.dp))
                                 .background(Color(0xFFD7C4EC))
                                 .padding(20.dp)
-                                .clickable {
-                                    navController.navigate(PagesEnum.WhackAMoleMenu) {
-                                        popUpTo(PagesEnum.WhackAMoleMenu.name) {
-                                            inclusive = true
-                                        }
-                                    }
-                                }
+                                .clickable {homeViewModel.getWAMData(token, navController)}
                         ){
                             Image(
                                 painter = painterResource(R.drawable.whac_a_mole),

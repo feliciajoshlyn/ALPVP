@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.R
+import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.WAMViewModel
 import kotlinx.coroutines.delay
@@ -53,6 +54,18 @@ fun WhackAMoleGame(
                 .padding(top = 60.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Button(
+                onClick = { navController.navigate(PagesEnum.WhackAMoleMenu.name) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5E4890)),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.align(Alignment.Start).padding(bottom = 16.dp)
+            ) {
+                Text(
+                    text = "Back",
+                    fontFamily = FontFamily(Font(R.font.jua)),
+                    color = Color.White
+                )
+            }
             //mode
             Box(
                 modifier = Modifier

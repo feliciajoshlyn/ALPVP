@@ -36,6 +36,8 @@ class CalendarViewModel(
 ) : ViewModel() {
     var dataStatus: CalendarDataStatusUIState by mutableStateOf(CalendarDataStatusUIState.Start)
 
+    val today = LocalDate.now()
+
     var currentMonth by mutableStateOf(YearMonth.now())
         private set
 
@@ -52,7 +54,6 @@ class CalendarViewModel(
     fun changeMonth(newMonth: YearMonth) {
         currentMonth = newMonth
         updateDaysList()
-        // Reset selected date to the first day of the new month if needed
         selectedDate = newMonth.atDay(1)
     }
 

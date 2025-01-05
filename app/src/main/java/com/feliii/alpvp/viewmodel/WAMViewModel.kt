@@ -219,10 +219,12 @@ class WAMViewModel (
 
         if(gameMode == "timed"){
             highscore = wamModel.timed_highscore
+            moleAppearanceDelay = 1000L
             isTimedMode = true
             gridSize = 3
         }else if(gameMode == "endless"){
             highscore = wamModel.endless_highscore
+            moleAppearanceDelay = 1000L
             gridSize = 3
         }else if(gameMode == "intense"){
             highscore = wamModel.intense_highscore
@@ -273,7 +275,6 @@ class WAMViewModel (
         if(index == activeMole) {
             score++
             mole_image_id = R.drawable.mole_hit
-            activeMole = -1
         }
     }
 
