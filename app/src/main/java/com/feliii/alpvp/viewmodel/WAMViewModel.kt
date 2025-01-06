@@ -2,7 +2,6 @@ package com.feliii.alpvp.viewmodel
 
 import android.content.Context
 import com.feliii.alpvp.R
-
 import android.media.MediaPlayer
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +18,6 @@ import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.RelaxGameApplication
 import com.feliii.alpvp.enums.PagesEnum
 import com.feliii.alpvp.model.ErrorModel
-import com.feliii.alpvp.model.GetWAMResponse
 import com.feliii.alpvp.model.WhackAMoleModel
 import com.feliii.alpvp.repository.WAMRepository
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
@@ -311,7 +309,7 @@ class WAMViewModel (
     fun leaveMenu(){
         stopSong()
     }
-    
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
