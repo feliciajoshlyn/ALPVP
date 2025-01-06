@@ -39,6 +39,7 @@ class WAMViewModel (
 ): ViewModel() {
     var dataStatus: WAMDataStatusUIState by mutableStateOf(WAMDataStatusUIState.Start)
         private set
+    //game
 
     var mode by mutableStateOf("")
         private set
@@ -64,7 +65,6 @@ class WAMViewModel (
     var highscore by mutableStateOf(0)
         private set
 
-    //game things
     var activeMole by mutableStateOf(-1)
         private set
 
@@ -92,73 +92,7 @@ class WAMViewModel (
     private var moleGenerationJob: Job? = null
     private var timerJob: Job? = null
 
-    var chosenSong by mutableStateOf(Song("Burrow Bliss", R.raw.burrowbliss))
-        private set
 
-    fun setChosenSong(songName: String){
-        for(song in songList){
-            if(song.name == songName) {
-                chosenSong = song
-                return
-            }
-        }
-    }
-
-    val songList = listOf(
-        Song("Burrow Bliss", R.raw.burrowbliss),
-        Song("Burrow Bliss V2", R.raw.burrowblissv2),
-        Song("Mole's Calm", R.raw.molescalm),
-        Song("Mole's Calm V2", R.raw.molescalmv2),
-        Song("Quiet Burrows", R.raw.quietburrows)
-    )
-
-    private var mediaPlayer: MediaPlayer? = null
-
-    fun startSong(context: Context) {
-        stopSong()
-        boolIsPlaying = true
-        mediaPlayer = MediaPlayer.create(context, chosenSong.id).apply {
-            start()
-        }
-    }
-
-    fun stopSong(){
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-
-    fun onToggleSong(){
-        boolIsPlaying = !boolIsPlaying
-        if(mediaPlayer == null){
-            return
-        }
-        if(isPlaying()){
-            mediaPlayer?.pause()
-        }else{
-            mediaPlayer?.start()
-        }
-    }
-
-    fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying == true
-    }
-
-    var boolIsPlaying by mutableStateOf(true)
-
-    fun skipSong(context: Context){
-        val index = songList.indexOf(chosenSong)
-        if(index == songList.size - 1){
-            chosenSong = songList[0]
-        }else {
-            chosenSong = songList[index + 1]
-        }
-        startSong(context)
-    }
-
-    fun leaveMenu(){
-        stopSong()
-    }
 
     fun updateWAMData(token: String, getWAM: () -> Unit) {
         viewModelScope.launch {
@@ -195,18 +129,6 @@ class WAMViewModel (
             }
         }
     }
-
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as RelaxGameApplication)
-                val wamRepository = application.container.wamRepository
-                WAMViewModel(wamRepository)
-            }
-        }
-    }
-
     fun navigateToGame(navContoller: NavHostController, gameMode: String, wamModel: WhackAMoleModel){
         mode = gameMode
         score = 0
@@ -319,6 +241,85 @@ class WAMViewModel (
     override fun onCleared() {
         super.onCleared()
         stopGame()
+    }
+
+    //song
+    var chosenSong by mutableStateOf(Song("Burrow Bliss", R.raw.burrowbliss))
+        private set
+
+    fun setChosenSong(songName: String){
+        for(song in songList){
+            if(song.name == songName) {
+                chosenSong = song
+                return
+            }
+        }
+    }
+
+    val songList = listOf(
+        Song("Burrow Bliss", R.raw.burrowbliss),
+        Song("Burrow Bliss V2", R.raw.burrowblissv2),
+        Song("Mole's Calm", R.raw.molescalm),
+        Song("Mole's Calm V2", R.raw.molescalmv2),
+        Song("Quiet Burrows", R.raw.quietburrows)
+    )
+
+    private var mediaPlayer: MediaPlayer? = null
+
+    fun startSong(context: Context) {
+        stopSong()
+        boolIsPlaying = true
+        mediaPlayer = MediaPlayer.create(context, chosenSong.id).apply {
+            start()
+        }
+    }
+
+    fun stopSong(){
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    fun onToggleSong(){
+        boolIsPlaying = !boolIsPlaying
+        if(mediaPlayer == null){
+            return
+        }
+        if(isPlaying()){
+            mediaPlayer?.pause()
+        }else{
+            mediaPlayer?.start()
+        }
+    }
+
+    fun isPlaying(): Boolean {
+        return mediaPlayer?.isPlaying == true
+    }
+
+    var boolIsPlaying by mutableStateOf(true)
+
+    fun skipSong(context: Context){
+        val index = songList.indexOf(chosenSong)
+        if(index == songList.size - 1){
+            chosenSong = songList[0]
+        }else {
+            chosenSong = songList[index + 1]
+        }
+        startSong(context)
+    }
+
+    fun leaveMenu(){
+        stopSong()
+    }
+    
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as RelaxGameApplication)
+                val wamRepository = application.container.wamRepository
+                WAMViewModel(wamRepository)
+            }
+        }
     }
 }
 
