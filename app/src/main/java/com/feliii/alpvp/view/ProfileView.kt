@@ -93,7 +93,7 @@ fun ProfilePage(
                     fontFamily = FontFamily(Font(R.font.jua)),
                     color = Color(0xFFD7C4EC),
                     modifier = Modifier
-                        .padding(top = 20.dp)      
+                        .padding(top = 20.dp)
                 )
 
             }
