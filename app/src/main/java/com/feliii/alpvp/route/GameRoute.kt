@@ -38,17 +38,20 @@ import com.feliii.alpvp.view.WhackAMoleMenu
 import com.feliii.alpvp.viewmodel.WAMViewModel
 import com.feliii.alpvp.view.login
 import com.feliii.alpvp.view.mainMenu
+import com.feliii.alpvp.view.ProfilePage
 import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
+import com.feliii.alpvp.viewmodel.ProfileViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RelaxGameApp(
     navController: NavHostController = rememberNavController(),
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
+    profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModel.Factory),
     authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory),
     wamViewModel: WAMViewModel = viewModel(factory = WAMViewModel.Factory),
     calendarViewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.Factory),
@@ -56,7 +59,6 @@ fun RelaxGameApp(
 ){
     val localContext = LocalContext.current
     val token = homeViewModel.token.collectAsState()
-    val username = homeViewModel.username.collectAsState()
 
     NavHost(navController = navController, startDestination = if(token.value != "Unknown" && token.value != ""){
         PagesEnum.Home.name
@@ -105,7 +107,7 @@ fun RelaxGameApp(
                                     .clip(CircleShape)
                                     .size(48.dp)
                                     .clickable {
-                                        /* logic here... */
+                                        navController.navigate(PagesEnum.Profile.name)
                                     }
                                     .padding(2.dp)
                             )
@@ -152,10 +154,8 @@ fun RelaxGameApp(
                     navController = navController,
                     context = localContext,
                     token = token.value,
-                    username = username.value,
                     homeViewModel = homeViewModel,
                     calendarViewModel = calendarViewModel,
-                    wamViewModel = wamViewModel,
                 )
             }
         }
@@ -205,7 +205,7 @@ fun RelaxGameApp(
                                     .clip(CircleShape)
                                     .size(48.dp)
                                     .clickable {
-                                        /* logic here... */
+                                        navController.navigate(PagesEnum.Profile.name)
                                     }
                                     .padding(2.dp)
                             )
@@ -264,6 +264,82 @@ fun RelaxGameApp(
                 calendarDetailViewModel = calendarDetailViewModel,
                 token = token.value
             )
+        }
+
+        composable(route = PagesEnum.Profile.name) {
+            Scaffold(
+                bottomBar = {
+                    BottomAppBar(
+                        modifier = Modifier.height(96.dp),
+                        containerColor = Color(0xFF8871CA) //Blue Marguerite
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // User bottom navbar
+                            Image(
+                                painter = painterResource(R.drawable.user_personoutline),
+                                contentDescription = "user",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF644E96))
+                                    .size(45.dp)
+                                    .clickable {
+                                        navController.navigate(PagesEnum.Profile.name)
+                                    }
+                                    .padding(2.dp)
+                            )
+
+                            // Minigame bottom navbar
+                            Image(
+                                painter = painterResource(R.drawable.minigame_window),
+                                contentDescription = "Minigame",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(72.dp)
+                                    .clickable {
+                                        navController.navigate(PagesEnum.Home.name) {
+                                            popUpTo(PagesEnum.Home.name) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+                                    .padding(8.dp)
+                            )
+
+                            // Mood Calendar bottom navbar
+                            Image(
+                                painter = painterResource(R.drawable.calendar_month),
+                                contentDescription = "calendar",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(48.dp)
+                                    .clickable {
+                                        navController.navigate(PagesEnum.Calendar.name) {
+                                            popUpTo(PagesEnum.Calendar.name) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+                                    .padding(2.dp)
+                            )
+                        }
+                    }
+                }
+            ) { innerpadding ->
+                ProfilePage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                        .padding(innerpadding),
+                    navController = navController,
+                    context = localContext,
+                    token = token.value,
+                    profileViewModel = profileViewModel
+                )
+            }
         }
     }
 }

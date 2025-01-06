@@ -4,7 +4,6 @@ import android.content.Context
 import com.feliii.alpvp.R
 
 import android.media.MediaPlayer
-import android.util.Log
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue

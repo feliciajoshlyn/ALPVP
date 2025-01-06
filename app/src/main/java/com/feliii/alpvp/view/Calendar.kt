@@ -61,6 +61,7 @@ fun MoodCalendar(
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
 
     LaunchedEffect(Unit) {
+        calendarViewModel.resetViewModel()
         calendarViewModel.getCalendarData(token, navController)
     }
 

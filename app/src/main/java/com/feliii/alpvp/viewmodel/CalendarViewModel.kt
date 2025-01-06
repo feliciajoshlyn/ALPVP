@@ -36,6 +36,11 @@ class CalendarViewModel(
 ) : ViewModel() {
     var dataStatus: CalendarDataStatusUIState by mutableStateOf(CalendarDataStatusUIState.Start)
 
+    fun resetViewModel(){
+        currentMonth = YearMonth.now()
+        selectedDate = LocalDate.now()
+    }
+
     val today = LocalDate.now()
 
     var currentMonth by mutableStateOf(YearMonth.now())

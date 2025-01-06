@@ -218,10 +218,8 @@ fun WhackAMoleMenu(
                     }
                 }
 
-                // Spacer for pushing the MusicPlayerBar to the bottom
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Music Player Bar at the bottom
                 MusicPlayerBar(
                     wamViewModel = wamViewModel,
                     context = context

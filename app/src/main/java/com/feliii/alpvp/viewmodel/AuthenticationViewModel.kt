@@ -157,7 +157,6 @@ class AuthenticationViewModel (
 
                                 resetViewModel()
 
-                                // Navigate to Home after successful registration
                                 navController.navigate(PagesEnum.Home.name) {
                                     popUpTo(PagesEnum.Login.name) {
                                         inclusive = true

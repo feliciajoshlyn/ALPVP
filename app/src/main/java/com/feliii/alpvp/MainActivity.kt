@@ -20,19 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ALPVPTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-//                WhackAMoleMenu(
-//                    modifier = TODO(),
-//                    wamViewModel = TODO(),
-//                    navController = TODO(),
-//                    token = TODO(),
-//                    context = TODO()
-//                )
+
                 // TODO: add routers here
                 RelaxGameApp()
             }

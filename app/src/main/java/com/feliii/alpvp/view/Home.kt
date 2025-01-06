@@ -43,11 +43,9 @@ import com.feliii.alpvp.viewmodel.WAMViewModel
 @Composable
 fun mainMenu(
     modifier: Modifier = Modifier,
-    wamViewModel: WAMViewModel,
     homeViewModel: HomeViewModel,
     navController: NavHostController,
     token: String,
-    username: String, //nnti delete
     context: Context,
     calendarViewModel: CalendarViewModel
 ) {

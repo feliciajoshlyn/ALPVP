@@ -29,8 +29,8 @@ interface AppContainer {
 }
 
 class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : AppContainer {
-    private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
-
+//    private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
+    private val APIBaseURL = "http://10.0.2.2:3000/"
 //    val ipAddress = getDeviceIPAddress()
 //    private val APIBaseURL = "http://$ipAddress:3000/"
 
