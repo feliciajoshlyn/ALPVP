@@ -5,6 +5,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -19,11 +22,15 @@ import com.feliii.alpvp.model.ErrorModel
 import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.model.GetFSResponse
 import com.feliii.alpvp.repository.FSRepository
+import com.feliii.alpvp.uiStates.AuthenticationUIState
 import com.feliii.alpvp.uiStates.FSDataStatusUIState
+import com.feliii.alpvp.uiStates.FidgetSpinnerUIState
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,17 +40,93 @@ import kotlin.math.absoluteValue
 
 class FidgetSpinnerViewModel(
     private val fsRepository: FSRepository
-) : ViewModel() {
+) : ViewModel()
+{
+
+    // UI State
+    private val _fsUIState = MutableStateFlow(FidgetSpinnerUIState())
+
+    val fsUIState: StateFlow<FidgetSpinnerUIState>
+        get() {
+            return _fsUIState.asStateFlow()
+        }
+
+    fun isMenuOpen_BoolSwitch(){
+        _fsUIState.update { currentState ->
+            if (currentState.isMenuOpen) {
+                currentState.copy(
+                    isMenuOpen = false,
+                )
+            } else {
+                currentState.copy(
+                    isMenuOpen = true,
+                )
+            }
+        }
+    }
+    // UI State
 
     var fsDataStatus: FSDataStatusUIState by mutableStateOf(FSDataStatusUIState.Start)
 
     var spinner_chosen by mutableStateOf(0)
         private set
 
+    fun changeSpinner(id: Int){
+        spinner_chosen = id
+        changeSpinnerImage()
+    }
+    fun changeSpinnerImage(){
+        /* List:
+        0 = fidget spinner
+        1 = pinwheel
+        2 = compass
+        3 = pencil
+        */
+
+        // Spinner Image
+        if (spinner_chosen == 0) {
+            imageResource = R.drawable.fidgetspinner
+            backItemImageResource = 0
+            offsetX = 0.dp
+            offsetY = 0.dp
+        }
+        else if (spinner_chosen == 1){
+            imageResource = R.drawable.pinwheel_play
+            backItemImageResource = R.drawable.pinwheel_stick
+            offsetX = 0.dp
+            offsetY = 150.dp
+        }
+        else if (spinner_chosen == 2){
+            imageResource = R.drawable.conpassarrow
+            backItemImageResource = R.drawable.conpass
+            offsetX = 10.dp
+            offsetY = 0.dp
+        }
+        else {
+            imageResource = R.drawable.pencil_vertical
+            backItemImageResource = R.drawable.papper_fs
+            offsetX = 0.dp
+            offsetY = 0.dp
+        }
+
+        // Background
+        if (spinner_chosen == 1){
+            backgroundImageResource = R.drawable.pinwheel_fsbackground
+        }
+        else {
+            backgroundImageResource = R.drawable.wood_fsbackground
+        }
+    }
+
     var music_chosen by mutableStateOf(0)
         private set
 
+    // this var is to check if update changing setting or not (score)
     var isUpdateSetting by mutableStateOf(false)
+        private set
+    fun updateSettingTrue(){
+        isUpdateSetting = true
+    }
 
     // Frontend
     var rotation = Animatable(0f)
@@ -56,11 +139,13 @@ class FidgetSpinnerViewModel(
         private set
 
     var score by mutableStateOf(0)
-        private set
 
     var backgroundImageResource = R.drawable.wood_fsbackground
     var backItemImageResource = 0
     var imageResource = R.drawable.fidgetspinner
+
+    var offsetX = 0.dp
+    var offsetY = 0.dp
 
     fun resetPrDecayTrack(){
         // Pr = previous rotation
@@ -72,7 +157,6 @@ class FidgetSpinnerViewModel(
 
         score += fullRotations
         previousRotation = currentRotation
-
     }
 
     fun updateVelocityAsDistance(distance: Float) {
@@ -95,7 +179,7 @@ class FidgetSpinnerViewModel(
     var submissionStatus: StringDataStatusUIState by mutableStateOf(StringDataStatusUIState.Start)
         private set
 
-    fun getFSData(token: String, navController: NavHostController) {
+    fun getFSData(token: String) {
         viewModelScope.launch {
             fsDataStatus = FSDataStatusUIState.Loading
 
@@ -108,13 +192,21 @@ class FidgetSpinnerViewModel(
                         res: Response<GetFSResponse>
                     ) {
                         if(res.isSuccessful) {
-                            fsDataStatus = FSDataStatusUIState.Success(res.body()!!.data)
+                            val responseBody = res.body()
+                            if (responseBody != null) {
+                                fsDataStatus = FSDataStatusUIState.Success(responseBody.data)
 
-                            Log.d("get-fs-data", "GET FS: ${res.body()}")
+                                Log.d("get-fs-data", "GET FS: $responseBody")
+                                spinner_chosen = responseBody.data.spinner_chosen
+                                music_chosen = responseBody.data.music_chosen
+                                score = responseBody.data.spins_score
 
-//                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
-//                            }
-                        }else {
+                                changeSpinnerImage()
+                            }
+                            else {
+                                fsDataStatus = FSDataStatusUIState.Failed("Unexpected null response body")
+                            }
+                        } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
@@ -135,7 +227,7 @@ class FidgetSpinnerViewModel(
     }
 
 
-    fun updateFSData(token: String, getFS: () -> Unit) {
+    fun updateFSData(token: String) {
         viewModelScope.launch {
             submissionStatus = StringDataStatusUIState.Loading
 
@@ -144,6 +236,7 @@ class FidgetSpinnerViewModel(
 
                 if (isUpdateSetting){
                     call = fsRepository.updateFSSettingData(token, spinner_chosen, music_chosen)
+                    isUpdateSetting = false
                 }
 
                 call.enqueue(object : Callback<GeneralResponseModel> {
@@ -153,10 +246,8 @@ class FidgetSpinnerViewModel(
                     ) {
                         if (res.isSuccessful) {
                             submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
-
-                            getFS()
-
-                        } else {
+                        }
+                        else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
