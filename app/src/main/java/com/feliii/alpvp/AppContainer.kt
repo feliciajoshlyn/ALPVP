@@ -4,14 +4,17 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.feliii.alpvp.repository.AuthenticationRepository
 import com.feliii.alpvp.repository.CalendarRepository
+import com.feliii.alpvp.repository.FSRepository
 import com.feliii.alpvp.repository.UserRepository
 import com.feliii.alpvp.repository.NetworkAuthenticationRepository
 import com.feliii.alpvp.repository.NetworkCalendarRepository
+import com.feliii.alpvp.repository.NetworkFSSettingRepository
 import com.feliii.alpvp.repository.NetworkUserRepository
 import com.feliii.alpvp.repository.NetworkWAMRepository
 import com.feliii.alpvp.repository.WAMRepository
 import com.feliii.alpvp.service.AuthenticationAPIService
 import com.feliii.alpvp.service.CalendarAPIService
+import com.feliii.alpvp.service.FSAPIService
 import com.feliii.alpvp.service.UserAPIService
 import com.feliii.alpvp.service.WAMAPIService
 import okhttp3.OkHttpClient
@@ -26,10 +29,11 @@ interface AppContainer {
     val userRepository: UserRepository
     val wamRepository: WAMRepository
     val calendarRepository: CalendarRepository
+    val fsRepository: FSRepository
 }
 
 class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : AppContainer {
-    private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
+    private val APIBaseURL = "http:/192.168.1.6:3000/" //isi ip wifi
 
 //    val ipAddress = getDeviceIPAddress()
 //    private val APIBaseURL = "http://$ipAddress:3000/"
@@ -58,6 +62,12 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
         retrofit.create(CalendarAPIService::class.java)
     }
 
+    private val fsRetrofitService: FSAPIService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(FSAPIService::class.java)
+    }
+
     override val authenticationRepository: AuthenticationRepository by lazy {
         NetworkAuthenticationRepository(authenticationRetrofitService)
     }
@@ -71,6 +81,10 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
 
     override val calendarRepository: CalendarRepository by lazy {
         NetworkCalendarRepository(CalendarRetrofitService)
+    }
+
+    override val fsRepository: FSRepository by lazy {
+        NetworkFSSettingRepository(fsRetrofitService)
     }
 
     //to initialize retrofit
