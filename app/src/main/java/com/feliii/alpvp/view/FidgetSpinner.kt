@@ -125,7 +125,7 @@ fun FidgetSpinner(
                 ) {
                     if (!isMenuOpen){
                         Image(
-                            painter = painterResource(R.drawable.back_button),
+                            painter = painterResource(R.drawable.density_medium),
                             contentDescription = null,
                             modifier = Modifier
                                 .size(52.dp)
@@ -140,7 +140,7 @@ fun FidgetSpinner(
                             onClick = {
                                 fsViewModel.changeSpinner(0)
                                 fsViewModel.updateSettingTrue()
-                                fsViewModel.updateFSData(token) { fsViewModel.getFSData(token) }
+                                fsViewModel.updateFSData(token)
 
                                 isMenuOpen = false
                             }
@@ -151,7 +151,7 @@ fun FidgetSpinner(
                             onClick = {
                                 fsViewModel.changeSpinner(1)
                                 fsViewModel.updateSettingTrue()
-                                fsViewModel.updateFSData(token) { fsViewModel.getFSData(token) }
+                                fsViewModel.updateFSData(token)
 
                                 isMenuOpen = false
                             }
@@ -162,7 +162,7 @@ fun FidgetSpinner(
                             onClick = {
                                 fsViewModel.changeSpinner(2)
                                 fsViewModel.updateSettingTrue()
-                                fsViewModel.updateFSData(token) { fsViewModel.getFSData(token) }
+                                fsViewModel.updateFSData(token)
 
                                 isMenuOpen = false
                             }
@@ -198,7 +198,7 @@ fun FidgetSpinner(
                 .align(Alignment.TopStart)
                 .clip(CircleShape)
                 .clickable {
-                    fsViewModel.updateFSData(token) { fsViewModel.getFSData(token) }
+                    fsViewModel.updateFSData(token)
 
                     navController.navigate(PagesEnum.Home.name) {
                         popUpTo(PagesEnum.Home.name) {
@@ -217,6 +217,8 @@ fun FidgetSpinner(
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
+                            fsViewModel.updateFSData(token)
+
                             coroutineScope.launch {
                                 fsViewModel.resetPrDecayTrack()
 
@@ -234,6 +236,8 @@ fun FidgetSpinner(
                     detectDragGestures(
                         onDragStart = {
                             coroutineScope.launch { rotation.stop() }
+
+                            fsViewModel.updateFSData(token)
                         },
                         onDragEnd = {
                             coroutineScope.launch {

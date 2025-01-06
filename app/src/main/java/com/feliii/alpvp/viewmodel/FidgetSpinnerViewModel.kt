@@ -42,7 +42,9 @@ class FidgetSpinnerViewModel(
 
     fun changeSpinner(id: Int){
         spinner_chosen = id
-
+        changeSpinnerImage()
+    }
+    fun changeSpinnerImage(){
         /* List:
         0 = fidget spinner
         1 = pinwheel
@@ -151,13 +153,11 @@ class FidgetSpinnerViewModel(
                                 spinner_chosen = responseBody.data.spinner_chosen
                                 music_chosen = responseBody.data.music_chosen
                                 score = responseBody.data.spins_score
+
+                                changeSpinnerImage()
                             }
                             else {
-                                val errorMessage = Gson().fromJson(
-                                    res.errorBody()!!.charStream(),
-                                    ErrorModel::class.java
-                                )
-                                fsDataStatus = FSDataStatusUIState.Failed(errorMessage.errors)
+                                fsDataStatus = FSDataStatusUIState.Failed("Unexpected null response body")
                             }
                         } else {
                             val errorMessage = Gson().fromJson(
@@ -180,7 +180,7 @@ class FidgetSpinnerViewModel(
     }
 
 
-    fun updateFSData(token: String, getFS: () -> Unit) {
+    fun updateFSData(token: String) {
         viewModelScope.launch {
             submissionStatus = StringDataStatusUIState.Loading
 
@@ -199,10 +199,8 @@ class FidgetSpinnerViewModel(
                     ) {
                         if (res.isSuccessful) {
                             submissionStatus = StringDataStatusUIState.Success(res.body()!!.data)
-
-                            getFS()
-
-                        } else {
+                        }
+                        else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
