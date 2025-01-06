@@ -26,14 +26,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,7 +73,7 @@ fun FidgetSpinner(
     navController: NavHostController,
     fsViewModel: FidgetSpinnerViewModel
 ) {
-    var isMenuOpen by remember { mutableStateOf(false) }
+    val fsUIState by fsViewModel.fsUIState.collectAsState()
 
     LaunchedEffect(fsViewModel.fsDataStatus) {
         val dataStatus = fsViewModel.fsDataStatus
@@ -113,66 +116,122 @@ fun FidgetSpinner(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxSize()
-                    .offset(x = 10.dp)
+                    .offset(
+                        x = fsViewModel.offsetX,
+                        y = fsViewModel.offsetY
+                    )
             )
         }
 
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .background(if (isMenuOpen) Color.White else Color.Transparent, shape = RoundedCornerShape(20.dp))
-                        .padding(16.dp)
-                ) {
-                    if (!isMenuOpen){
-                        Image(
-                            painter = painterResource(R.drawable.density_medium),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape)
-                                .clickable {
-                                    isMenuOpen = true
-                                }
+        // Setting change
+        Column(
+            horizontalAlignment = AbsoluteAlignment.Right,
+            modifier = Modifier
+                .padding(20.dp)
+                .align(Alignment.TopEnd)
+                .background(Color(0xFFD7C4EC), shape = RoundedCornerShape(20.dp))
+                .padding(8.dp)
+        ) {
+            // Hamburger
+            Image(
+                painter = painterResource(R.drawable.density_medium),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        fsViewModel.isMenuOpen_BoolSwitch()
+                    }
+            )
+
+            // Choice
+            AnimatedVisibility(
+                visible = fsUIState.isMenuOpen,
+            ) {
+                Column (
+                    horizontalAlignment = AbsoluteAlignment.Right
+                ){
+                    // Original
+                    Button(
+                        onClick = {
+                            fsViewModel.changeSpinner(0)
+                            fsViewModel.updateSettingTrue()
+                            fsViewModel.updateFSData(token)
+
+                            fsViewModel.isMenuOpen_BoolSwitch()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF9141E6),
+                        )
+                    ) {
+                        Text(
+                            text = "Fidget Spinner",
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                            fontSize = 16.sp
                         )
                     }
-                    else {
-                        Button(
-                            onClick = {
-                                fsViewModel.changeSpinner(0)
-                                fsViewModel.updateSettingTrue()
-                                fsViewModel.updateFSData(token)
+                    // Pinwheel
+                    Button(
+                        onClick = {
+                            fsViewModel.changeSpinner(1)
+                            fsViewModel.updateSettingTrue()
+                            fsViewModel.updateFSData(token)
 
-                                isMenuOpen = false
-                            }
-                        ) {
-                            Text("Fidget Spinner")
-                        }
-                        Button(
-                            onClick = {
-                                fsViewModel.changeSpinner(1)
-                                fsViewModel.updateSettingTrue()
-                                fsViewModel.updateFSData(token)
-
-                                isMenuOpen = false
-                            }
-                        ) {
-                            Text("Pinwheel")
-                        }
-                        Button(
-                            onClick = {
-                                fsViewModel.changeSpinner(2)
-                                fsViewModel.updateSettingTrue()
-                                fsViewModel.updateFSData(token)
-
-                                isMenuOpen = false
-                            }
-                        ) {
-                            Text("Compass")
-                        }
+                            fsViewModel.isMenuOpen_BoolSwitch()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF9141E6),
+                        )
+                    ) {
+                        Text(
+                            text = "Pinwheel",
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                            fontSize = 16.sp
+                        )
                     }
+                    // Compass
+                    Button(
+                        onClick = {
+                            fsViewModel.changeSpinner(2)
+                            fsViewModel.updateSettingTrue()
+                            fsViewModel.updateFSData(token)
 
+                            fsViewModel.isMenuOpen_BoolSwitch()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF9141E6),
+                        )
+                    ) {
+                        Text(
+                            text = "Compass",
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                            fontSize = 16.sp
+                        )
+                    }
+                    // Compass
+                    Button(
+                        onClick = {
+                            fsViewModel.changeSpinner(3)
+                            fsViewModel.updateSettingTrue()
+                            fsViewModel.updateFSData(token)
+
+                            fsViewModel.isMenuOpen_BoolSwitch()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF9141E6),
+                        )
+                    ) {
+                        Text(
+                            text = "Pencil",
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                            fontSize = 16.sp
+                        )
+                    }
                 }
 
+            }
+
+        }
 
 
         // Spins score display

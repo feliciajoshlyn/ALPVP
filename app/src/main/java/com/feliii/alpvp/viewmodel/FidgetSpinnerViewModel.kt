@@ -5,6 +5,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -19,11 +22,15 @@ import com.feliii.alpvp.model.ErrorModel
 import com.feliii.alpvp.model.GeneralResponseModel
 import com.feliii.alpvp.model.GetFSResponse
 import com.feliii.alpvp.repository.FSRepository
+import com.feliii.alpvp.uiStates.AuthenticationUIState
 import com.feliii.alpvp.uiStates.FSDataStatusUIState
+import com.feliii.alpvp.uiStates.FidgetSpinnerUIState
 import com.feliii.alpvp.uiStates.StringDataStatusUIState
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,7 +40,31 @@ import kotlin.math.absoluteValue
 
 class FidgetSpinnerViewModel(
     private val fsRepository: FSRepository
-) : ViewModel() {
+) : ViewModel()
+{
+
+    // UI State
+    private val _fsUIState = MutableStateFlow(FidgetSpinnerUIState())
+
+    val fsUIState: StateFlow<FidgetSpinnerUIState>
+        get() {
+            return _fsUIState.asStateFlow()
+        }
+
+    fun isMenuOpen_BoolSwitch(){
+        _fsUIState.update { currentState ->
+            if (currentState.isMenuOpen) {
+                currentState.copy(
+                    isMenuOpen = false,
+                )
+            } else {
+                currentState.copy(
+                    isMenuOpen = true,
+                )
+            }
+        }
+    }
+    // UI State
 
     var fsDataStatus: FSDataStatusUIState by mutableStateOf(FSDataStatusUIState.Start)
 
@@ -49,20 +80,33 @@ class FidgetSpinnerViewModel(
         0 = fidget spinner
         1 = pinwheel
         2 = compass
+        3 = pencil
         */
 
         // Spinner Image
         if (spinner_chosen == 0) {
             imageResource = R.drawable.fidgetspinner
             backItemImageResource = 0
+            offsetX = 0.dp
+            offsetY = 0.dp
         }
         else if (spinner_chosen == 1){
             imageResource = R.drawable.pinwheel_play
             backItemImageResource = R.drawable.pinwheel_stick
+            offsetX = 0.dp
+            offsetY = 150.dp
         }
-        else {
+        else if (spinner_chosen == 2){
             imageResource = R.drawable.conpassarrow
             backItemImageResource = R.drawable.conpass
+            offsetX = 10.dp
+            offsetY = 0.dp
+        }
+        else {
+            imageResource = R.drawable.pencil_vertical
+            backItemImageResource = R.drawable.papper_fs
+            offsetX = 0.dp
+            offsetY = 0.dp
         }
 
         // Background
@@ -77,9 +121,9 @@ class FidgetSpinnerViewModel(
     var music_chosen by mutableStateOf(0)
         private set
 
+    // this var is to check if update changing setting or not (score)
     var isUpdateSetting by mutableStateOf(false)
         private set
-
     fun updateSettingTrue(){
         isUpdateSetting = true
     }
@@ -99,6 +143,9 @@ class FidgetSpinnerViewModel(
     var backgroundImageResource = R.drawable.wood_fsbackground
     var backItemImageResource = 0
     var imageResource = R.drawable.fidgetspinner
+
+    var offsetX = 0.dp
+    var offsetY = 0.dp
 
     fun resetPrDecayTrack(){
         // Pr = previous rotation
