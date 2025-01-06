@@ -19,6 +19,6 @@ interface FSAPIService {
     @PUT("api/fs/setting")
     fun updateFSSetting(@Header("X-API-TOKEN") token: String, @Body fsModel: FidgetSpinnerUpdateRequest): Call<GeneralResponseModel>
 
-    @PUT("api/wam/score")
+    @PUT("api/fs/score")
     fun updateFSScore(@Header("X-API-TOKEN") token: String, @Body fsModel: FidgetSpinnerScoreUpdate): Call<GeneralResponseModel>
 }

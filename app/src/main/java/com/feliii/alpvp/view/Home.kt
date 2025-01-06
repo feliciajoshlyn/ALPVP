@@ -103,10 +103,11 @@ fun mainMenu(
                         Column (
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clip(RoundedCornerShape(20.dp))
+                            modifier = Modifier
+                                .clickable {homeViewModel.getWAMData(token, navController)}
+                                .clip(RoundedCornerShape(20.dp))
                                 .background(Color(0xFFD7C4EC))
                                 .padding(20.dp)
-                                .clickable {homeViewModel.getWAMData(token, navController)}
                         ){
                             Image(
                                 painter = painterResource(R.drawable.whac_a_mole),
@@ -128,9 +129,7 @@ fun mainMenu(
                         Column (
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                                .background(Color(0xFFD7C4EC))
-                                .padding(20.dp)
+                            modifier = Modifier
                                 .clickable {
                                     navController.navigate(PagesEnum.FidgetSpinner.name) {
                                         popUpTo(PagesEnum.FidgetSpinner.name) {
@@ -138,6 +137,9 @@ fun mainMenu(
                                         }
                                     }
                                 }
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFFD7C4EC))
+                                .padding(20.dp)
                         ){
                             Image(
                                 painter = painterResource(R.drawable.pinwheel),

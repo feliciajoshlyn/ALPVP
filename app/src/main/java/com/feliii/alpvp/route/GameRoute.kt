@@ -190,6 +190,8 @@ fun RelaxGameApp(
 
         composable(route = PagesEnum.FidgetSpinner.name) {
             FidgetSpinner(
+                token = token.value,
+                context = localContext,
                 navController = navController,
                 fsViewModel = fsViewModel
             )

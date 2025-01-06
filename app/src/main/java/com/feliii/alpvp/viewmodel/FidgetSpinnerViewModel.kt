@@ -40,10 +40,47 @@ class FidgetSpinnerViewModel(
     var spinner_chosen by mutableStateOf(0)
         private set
 
+    fun changeSpinner(id: Int){
+        spinner_chosen = id
+
+        /* List:
+        0 = fidget spinner
+        1 = pinwheel
+        2 = compass
+        */
+
+        // Spinner Image
+        if (spinner_chosen == 0) {
+            imageResource = R.drawable.fidgetspinner
+            backItemImageResource = 0
+        }
+        else if (spinner_chosen == 1){
+            imageResource = R.drawable.pinwheel_play
+            backItemImageResource = R.drawable.pinwheel_stick
+        }
+        else {
+            imageResource = R.drawable.conpassarrow
+            backItemImageResource = R.drawable.conpass
+        }
+
+        // Background
+        if (spinner_chosen == 1){
+            backgroundImageResource = R.drawable.pinwheel_fsbackground
+        }
+        else {
+            backgroundImageResource = R.drawable.wood_fsbackground
+        }
+    }
+
     var music_chosen by mutableStateOf(0)
         private set
 
     var isUpdateSetting by mutableStateOf(false)
+        private set
+
+    fun updateSettingTrue(){
+        isUpdateSetting = true
+    }
 
     // Frontend
     var rotation = Animatable(0f)
@@ -56,7 +93,6 @@ class FidgetSpinnerViewModel(
         private set
 
     var score by mutableStateOf(0)
-        private set
 
     var backgroundImageResource = R.drawable.wood_fsbackground
     var backItemImageResource = 0
@@ -72,7 +108,6 @@ class FidgetSpinnerViewModel(
 
         score += fullRotations
         previousRotation = currentRotation
-
     }
 
     fun updateVelocityAsDistance(distance: Float) {
@@ -95,7 +130,7 @@ class FidgetSpinnerViewModel(
     var submissionStatus: StringDataStatusUIState by mutableStateOf(StringDataStatusUIState.Start)
         private set
 
-    fun getFSData(token: String, navController: NavHostController) {
+    fun getFSData(token: String) {
         viewModelScope.launch {
             fsDataStatus = FSDataStatusUIState.Loading
 
@@ -108,13 +143,23 @@ class FidgetSpinnerViewModel(
                         res: Response<GetFSResponse>
                     ) {
                         if(res.isSuccessful) {
-                            fsDataStatus = FSDataStatusUIState.Success(res.body()!!.data)
+                            val responseBody = res.body()
+                            if (responseBody != null) {
+                                fsDataStatus = FSDataStatusUIState.Success(responseBody.data)
 
-                            Log.d("get-fs-data", "GET FS: ${res.body()}")
-
-//                            navController.navigate(PagesEnum.WhackAMoleMenu.name) {
-//                            }
-                        }else {
+                                Log.d("get-fs-data", "GET FS: $responseBody")
+                                spinner_chosen = responseBody.data.spinner_chosen
+                                music_chosen = responseBody.data.music_chosen
+                                score = responseBody.data.spins_score
+                            }
+                            else {
+                                val errorMessage = Gson().fromJson(
+                                    res.errorBody()!!.charStream(),
+                                    ErrorModel::class.java
+                                )
+                                fsDataStatus = FSDataStatusUIState.Failed(errorMessage.errors)
+                            }
+                        } else {
                             val errorMessage = Gson().fromJson(
                                 res.errorBody()!!.charStream(),
                                 ErrorModel::class.java
@@ -144,6 +189,7 @@ class FidgetSpinnerViewModel(
 
                 if (isUpdateSetting){
                     call = fsRepository.updateFSSettingData(token, spinner_chosen, music_chosen)
+                    isUpdateSetting = false
                 }
 
                 call.enqueue(object : Callback<GeneralResponseModel> {
