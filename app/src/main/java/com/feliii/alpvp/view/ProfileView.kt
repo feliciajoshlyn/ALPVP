@@ -23,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +43,6 @@ import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.ProfileViewModel
 import com.feliii.alpvp.viewmodel.WAMViewModel
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
 @Composable
 fun ProfilePage(
     modifier: Modifier = Modifier,
@@ -88,7 +88,7 @@ fun ProfilePage(
             )
             Column {
                 Text(
-                    text = "Hi ${profileViewModel.username.value}",
+                    text = "Hi ${profileViewModel.username.collectAsState().value}",
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.jua)),
                     color = Color(0xFFD7C4EC),

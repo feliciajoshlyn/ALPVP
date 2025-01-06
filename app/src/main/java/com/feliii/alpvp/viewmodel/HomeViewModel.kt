@@ -148,13 +148,6 @@ class HomeViewModel (
         }
     }
 
-//    fun saveUsernameToken(username: String, token: String) {
-//        viewModelScope.launch {
-//            userRepository.saveUsername(username)
-//            userRepository.saveUserToken(token)
-//        }
-//    }
-
     fun saveUsernameToken(username: String, token: String) {
         viewModelScope.launch {
             userRepository.saveUsername(username)

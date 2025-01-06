@@ -144,6 +144,7 @@ class WAMViewModel (
         }else if(gameMode == "endless"){
             highscore = wamModel.endless_highscore
             moleAppearanceDelay = 1000L
+            isTimedMode = false
             gridSize = 3
         }else if(gameMode == "intense"){
             highscore = wamModel.intense_highscore
