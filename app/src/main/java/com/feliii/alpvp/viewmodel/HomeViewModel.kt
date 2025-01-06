@@ -50,50 +50,50 @@ class HomeViewModel (
     )
 
 
-//    fun logoutUser(token: String, navController: NavHostController) {
-//        viewModelScope.launch() {
-//            logoutStatus = StringDataStatusUIState.Loading
-//
-//            Log.d("logout-token", "LOGOUT TOKEN: ${token}")
-//
-//            try {
-//                val call = userRepository.logout(token)
-//
-//                call.enqueue(object: Callback<GeneralResponseModel>{
-//                    override fun onResponse(
-//                        call: Call<GeneralResponseModel>,
-//                        res: Response<GeneralResponseModel>
-//                    ) {
-//                        if(res.isSuccessful){
-//                            logoutStatus = StringDataStatusUIState.Success(data = res.body()!!.data)
-//
-//                            saveUsernameToken("Unknown", "Unknown")
-//
-//                            navController.navigate(PagesEnum.Login.name){
-//                                popUpTo(PagesEnum.Home.name){
-//                                    inclusive = true
-//                                }
-//                            }
-//                        }else {
-//                            val errorMessage = Gson().fromJson(
-//                                res.errorBody()!!.charStream(),
-//                                ErrorModel::class.java
-//                            )
-//                            logoutStatus = StringDataStatusUIState.Failed(errorMessage.errors)
-//                        }
-//                    }
-//
-//                    override fun onFailure(call: Call<GeneralResponseModel?>, t: Throwable) {
-//                        logoutStatus = StringDataStatusUIState.Failed(t.localizedMessage)
-//                        Log.d("logout-failure", t.localizedMessage)
-//                    }
-//                })
-//            }catch(error: IOException){
-//                logoutStatus = StringDataStatusUIState.Failed(error.localizedMessage)
-//                Log.d("logout-error", error.localizedMessage)
-//            }
-//        }
-//    }
+    fun logoutUser(token: String, navController: NavHostController) {
+        viewModelScope.launch() {
+            logoutStatus = StringDataStatusUIState.Loading
+
+            Log.d("logout-token", "LOGOUT TOKEN: ${token}")
+
+            try {
+                val call = userRepository.logout(token)
+
+                call.enqueue(object: Callback<GeneralResponseModel>{
+                    override fun onResponse(
+                        call: Call<GeneralResponseModel>,
+                        res: Response<GeneralResponseModel>
+                    ) {
+                        if(res.isSuccessful){
+                            logoutStatus = StringDataStatusUIState.Success(data = res.body()!!.data)
+
+                            saveUsernameToken("Unknown", "Unknown")
+
+                            navController.navigate(PagesEnum.Login.name){
+                                popUpTo(PagesEnum.Home.name){
+                                    inclusive = true
+                                }
+                            }
+                        }else {
+                            val errorMessage = Gson().fromJson(
+                                res.errorBody()!!.charStream(),
+                                ErrorModel::class.java
+                            )
+                            logoutStatus = StringDataStatusUIState.Failed(errorMessage.errors)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GeneralResponseModel?>, t: Throwable) {
+                        logoutStatus = StringDataStatusUIState.Failed(t.localizedMessage)
+                        Log.d("logout-failure", t.localizedMessage)
+                    }
+                })
+            }catch(error: IOException){
+                logoutStatus = StringDataStatusUIState.Failed(error.localizedMessage)
+                Log.d("logout-error", error.localizedMessage)
+            }
+        }
+    }
 
     fun getWAMData(token: String, navController: NavHostController) {
         viewModelScope.launch {
@@ -154,6 +154,13 @@ class HomeViewModel (
 //            userRepository.saveUserToken(token)
 //        }
 //    }
+
+    fun saveUsernameToken(username: String, token: String) {
+        viewModelScope.launch {
+            userRepository.saveUsername(username)
+            userRepository.saveUserToken(token)
+        }
+    }
 
     fun clearLogoutErrorMessage() {
         logoutStatus = StringDataStatusUIState.Start

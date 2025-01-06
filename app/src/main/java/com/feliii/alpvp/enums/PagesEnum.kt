@@ -8,6 +8,6 @@ enum class PagesEnum() {
     WhackAMoleGame,
     Calendar,
     TodayMood,
-    Profile
+    Profile,
     FidgetSpinner
 }
