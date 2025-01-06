@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.feliii.alpvp.R
 import com.feliii.alpvp.enums.PagesEnum
+import com.feliii.alpvp.view.FidgetSpinner
 import com.feliii.alpvp.view.MoodCalendar
 import com.feliii.alpvp.view.TodayMood
 import com.feliii.alpvp.view.WhackAMoleGame
@@ -43,6 +44,7 @@ import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
+import com.feliii.alpvp.viewmodel.FidgetSpinnerViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.ProfileViewModel
 
@@ -54,6 +56,7 @@ fun RelaxGameApp(
     profileViewModel: ProfileViewModel = viewModel(factory = ProfileViewModel.Factory),
     authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory),
     wamViewModel: WAMViewModel = viewModel(factory = WAMViewModel.Factory),
+    fsViewModel: FidgetSpinnerViewModel = viewModel(factory = FidgetSpinnerViewModel.Factory),
     calendarViewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.Factory),
     calendarDetailViewModel: CalendarDetailViewModel = viewModel(factory = CalendarDetailViewModel.Factory)
 ){
@@ -182,6 +185,13 @@ fun RelaxGameApp(
                 wamViewModel = wamViewModel,
                 token = token.value,
                 homeViewModel = homeViewModel,
+            )
+        }
+
+        composable(route = PagesEnum.FidgetSpinner.name) {
+            FidgetSpinner(
+                navController = navController,
+                fsViewModel = fsViewModel
             )
         }
 

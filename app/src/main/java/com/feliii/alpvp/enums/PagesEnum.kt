@@ -9,4 +9,5 @@ enum class PagesEnum() {
     Calendar,
     TodayMood,
     Profile
+    FidgetSpinner
 }
