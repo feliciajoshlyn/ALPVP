@@ -29,6 +29,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
+import kotlin.math.absoluteValue
 
 class FidgetSpinnerViewModel(
     private val fsRepository: FSRepository
@@ -66,11 +67,12 @@ class FidgetSpinnerViewModel(
         previousRotation = rotation.value
     }
     fun trackSpinDuringDecay() {
-        val currentRotation = rotation.value
-        val fullRotations = (currentRotation / 360).toInt() - (previousRotation / 360).toInt()
+        val currentRotation = rotation.value //AbsoluteValue so it cant be negative when spinned counterclockwise
+        val fullRotations = ((currentRotation / 360).toInt() - (previousRotation / 360).toInt()).absoluteValue
 
         score += fullRotations
         previousRotation = currentRotation
+
     }
 
     fun updateVelocityAsDistance(distance: Float) {

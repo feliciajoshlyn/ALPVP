@@ -132,9 +132,8 @@ fun mainMenu(
                                 .background(Color(0xFFD7C4EC))
                                 .padding(20.dp)
                                 .clickable {
-                                    // sementara ke WAM
-                                    navController.navigate(PagesEnum.WhackAMoleMenu) {
-                                        popUpTo(PagesEnum.WhackAMoleMenu.name) {
+                                    navController.navigate(PagesEnum.FidgetSpinner.name) {
+                                        popUpTo(PagesEnum.FidgetSpinner.name) {
                                             inclusive = true
                                         }
                                     }
@@ -204,12 +203,13 @@ fun mainMenu(
                                 .background(Color(0xFFD7C4EC))
                                 .padding(20.dp)
                                 .clickable {
-                                    // sementara ke WAM
-                                    navController.navigate(PagesEnum.WhackAMoleMenu) {
-                                        popUpTo(PagesEnum.WhackAMoleMenu.name) {
-                                            inclusive = true
-                                        }
-                                    }
+//                                    // sementara ke WAM
+//                                    navController.navigate(PagesEnum.WhackAMoleMenu) {
+//                                        popUpTo(PagesEnum.WhackAMoleMenu.name) {
+//                                            inclusive = true
+//                                        }
+//                                    }
+                                    homeViewModel.logoutUser(token, navController)
                                 }
                         ){
                             Image(
