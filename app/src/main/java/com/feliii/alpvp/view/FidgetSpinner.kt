@@ -236,7 +236,7 @@ fun FidgetSpinner(
 
         // Spins score display
         Text(
-            text = "Score: ${fsViewModel.score}",
+            text = "Spins: ${fsViewModel.score}",
             color = Color.White,
             fontSize = 40.sp,
             fontFamily = FontFamily(Font(R.font.jua)),
