@@ -1,5 +1,7 @@
 package com.feliii.alpvp.viewmodel
 
+import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.getValue
@@ -68,6 +70,7 @@ class FidgetSpinnerViewModel(
 
     var fsDataStatus: FSDataStatusUIState by mutableStateOf(FSDataStatusUIState.Start)
 
+    // Spinner Choice
     var spinner_chosen by mutableStateOf(0)
         private set
 
@@ -117,9 +120,68 @@ class FidgetSpinnerViewModel(
             backgroundImageResource = R.drawable.wood_fsbackground
         }
     }
+    // Spinner Choice
 
+    // Music
     var music_chosen by mutableStateOf(0)
         private set
+    var musicAndName by mutableStateOf(Song("Gentle Spin", R.raw.gentlespin))
+        private set
+    var boolIsPlaying by mutableStateOf(true)
+
+    val songList = listOf(
+        Song("Gentle Spin", R.raw.gentlespin),
+        Song("Gentle Spin V2", R.raw.gentlespinv2),
+        Song("Spin Serenity", R.raw.spinserenity),
+        Song("Spin Serenity V2", R.raw.spinserenityv2),
+        Song("Endless Orbit", R.raw.endlessorbit)
+    )
+
+    fun skipSong(context: Context){
+        val index = songList.indexOf(musicAndName)
+        if(index == songList.size - 1){
+            musicAndName = songList[0]
+        }else {
+            musicAndName = songList[index + 1]
+        }
+        startSong(context)
+    }
+
+    private var mediaPlayer: MediaPlayer? = null
+    fun isPlaying(): Boolean {
+        return mediaPlayer?.isPlaying == true
+    }
+
+    // Start & Stop
+    fun startSong(context: Context) {
+        stopSong()
+        boolIsPlaying = true
+        mediaPlayer = MediaPlayer.create(context, musicAndName.id).apply {
+            start()
+        }
+    }
+    fun stopSong(){
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    // Toggeling
+    fun onToggleSong(){
+        boolIsPlaying = !boolIsPlaying
+        if(mediaPlayer == null){
+            return
+        }
+        if(isPlaying()){
+            mediaPlayer?.pause()
+        }else{
+            mediaPlayer?.start()
+        }
+    }
+    fun leaveMenu(){
+        stopSong()
+    }
+    // Music
 
     // this var is to check if update changing setting or not (score)
     var isUpdateSetting by mutableStateOf(false)

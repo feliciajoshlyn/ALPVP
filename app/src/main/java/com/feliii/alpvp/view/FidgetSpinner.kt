@@ -16,12 +16,19 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.feliii.alpvp.R
 import com.feliii.alpvp.enums.PagesEnum
@@ -89,6 +97,7 @@ fun FidgetSpinner(
     // unit = void?
     LaunchedEffect(Unit) {
         fsViewModel.getFSData(token)
+        fsViewModel.startSong(context)
     }
 
     val stateZ = rememberTransformableState { _, _, rotationChange ->
@@ -131,6 +140,7 @@ fun FidgetSpinner(
                 .align(Alignment.TopEnd)
                 .background(Color(0xFFD7C4EC), shape = RoundedCornerShape(20.dp))
                 .padding(8.dp)
+                .zIndex(1f)
         ) {
             // Hamburger
             Image(
@@ -151,6 +161,8 @@ fun FidgetSpinner(
                 Column (
                     horizontalAlignment = AbsoluteAlignment.Right
                 ){
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     // Original
                     Button(
                         onClick = {
@@ -161,7 +173,7 @@ fun FidgetSpinner(
                             fsViewModel.isMenuOpen_BoolSwitch()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF9141E6),
+                            containerColor = Color(0xFF5E4890),
                         )
                     ) {
                         Text(
@@ -180,7 +192,7 @@ fun FidgetSpinner(
                             fsViewModel.isMenuOpen_BoolSwitch()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF9141E6),
+                            containerColor = Color(0xFF5E4890),
                         )
                     ) {
                         Text(
@@ -199,7 +211,7 @@ fun FidgetSpinner(
                             fsViewModel.isMenuOpen_BoolSwitch()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF9141E6),
+                            containerColor = Color(0xFF5E4890),
                         )
                     ) {
                         Text(
@@ -208,7 +220,7 @@ fun FidgetSpinner(
                             fontSize = 16.sp
                         )
                     }
-                    // Compass
+                    // Pencil
                     Button(
                         onClick = {
                             fsViewModel.changeSpinner(3)
@@ -218,7 +230,7 @@ fun FidgetSpinner(
                             fsViewModel.isMenuOpen_BoolSwitch()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF9141E6),
+                            containerColor = Color(0xFF5E4890),
                         )
                     ) {
                         Text(
@@ -226,6 +238,69 @@ fun FidgetSpinner(
                             fontFamily = FontFamily(Font(R.font.jua)),
                             fontSize = 16.sp
                         )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Music player
+                    Column(
+                        modifier = Modifier
+                            .background(
+                                Color(0xFF5E4890),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = "🎵",
+                            color = Color(0xFFD7C4EC),
+                            fontSize = 24.sp,
+                            modifier = Modifier.background(Color(0xFFD7C4EC), shape = CircleShape)
+                                .padding(8.dp)
+                        )
+
+                        // Music name
+                        Text(
+                            text = "Playing - ${fsViewModel.musicAndName.name}",
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.jua)),
+                            color = Color.White,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Skip and pause button
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            //play pause button
+                            Text(
+                                text = if (fsViewModel.boolIsPlaying) "🔇" else "🔊",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                modifier = Modifier.background(
+                                    color = Color(0xFFB39DDB), // Lighter purple background
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                    .padding(horizontal = 28.dp, vertical = 2.dp)
+                                    .clickable { fsViewModel.onToggleSong() }
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            // Skip button
+                            Text(
+                                text = "⏭",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                modifier = Modifier.background(
+                                    color = Color(0xFFB39DDB), // Lighter purple background
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                    .padding(horizontal = 28.dp, vertical = 2.dp)
+                                    .clickable { fsViewModel.skipSong(context) }
+                            )
+                        }
+
                     }
                 }
 
@@ -258,6 +333,7 @@ fun FidgetSpinner(
                 .clip(CircleShape)
                 .clickable {
                     fsViewModel.updateFSData(token)
+                    fsViewModel.stopSong()
 
                     navController.navigate(PagesEnum.Home.name) {
                         popUpTo(PagesEnum.Home.name) {
