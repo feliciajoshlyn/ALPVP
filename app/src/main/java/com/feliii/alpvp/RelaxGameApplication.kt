@@ -13,7 +13,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 
 //initialize container used
 class RelaxGameApplication : Application(){
-    lateinit var container: AppContainer
+    lateinit var container: AppContainer  
     override fun onCreate() {
         super.onCreate()
         container = DefaultAppContainer(dataStore)

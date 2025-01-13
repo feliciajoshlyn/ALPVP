@@ -24,6 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +56,8 @@ fun ProfilePage(
     context: Context,
 ) {
     val logoutStatus = profileViewModel.logoutStatus
+    val selectedSong = profileViewModel.selectedSong.collectAsState().value
+    val songList = profileViewModel.getSongList()
 
     LaunchedEffect(logoutStatus) {
         if (logoutStatus is StringDataStatusUIState.Failed) {
@@ -65,14 +71,13 @@ fun ProfilePage(
     }
 
     if (logoutStatus is StringDataStatusUIState.Loading) {
-
+        // Show a loading indicator if needed
     } else {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFF5E4890))
-                .padding(top = 100.dp)
-                .padding(horizontal = 20.dp),
+                .padding(top = 100.dp, start = 20.dp, end = 20.dp),
         ) {
             // Title
             Text(
@@ -86,37 +91,63 @@ fun ProfilePage(
                     .background(Color(0xFFD7C4EC))
                     .padding(20.dp)
             )
-            Column {
-                Text(
-                    text = "Hi ${profileViewModel.username.collectAsState().value}",
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.jua)),
-                    color = Color(0xFFD7C4EC),
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                )
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Hi ${profileViewModel.username.collectAsState().value}",
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.jua)),
+                color = Color(0xFFD7C4EC)
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = "Select Background Music:",
+                fontSize = 20.sp,
+                color = Color(0xFFD7C4EC),
+                fontFamily = FontFamily(Font(R.font.jua))
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            songList.forEach { song ->
+                Text(
+                    text = song.name,
+                    fontSize = 18.sp,
+                    color = if (song == selectedSong) Color.Green else Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            profileViewModel.setSelectedSong(song.name, context)
+                        }
+                        .padding(8.dp)
+                )
             }
 
+            Spacer(modifier = Modifier.height(40.dp))
+
             Button(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 200.dp),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD7C4EC)),
                 onClick = {
+                    profileViewModel.stopMusic() // Stop music before logging out
                     profileViewModel.logoutUser(token, navController)
-                },
+                }
             ) {
                 Text(
-                    text = "logout",
+                    text = "Logout",
                     fontFamily = FontFamily(Font(R.font.jua)),
                     fontSize = 20.sp
-                    )
+                )
             }
         }
     }
-
 }
+
+
+
 
 //    Button(
 //        onClick = { wamViewModel.getWAMData(token = token, navController = navController) },
