@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -67,53 +68,131 @@ fun ProfilePage(
     if (logoutStatus is StringDataStatusUIState.Loading) {
 
     } else {
-        Column(
+        // this Box is the background
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFF5E4890))
-                .padding(top = 100.dp)
-                .padding(horizontal = 20.dp),
         ) {
-            // Title
-            Text(
-                text = "Profile",
-                fontSize = 40.sp,
-                color = Color(0xFF5E4890),
-                fontFamily = FontFamily(Font(R.font.jua)),
+            // bg Cat image
+            Image(
+                painter = painterResource(R.drawable.happy_cat),
+                contentDescription = null,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .align(Alignment.CenterHorizontally)
-                    .background(Color(0xFFD7C4EC))
-                    .padding(20.dp)
-            )
-            Column {
-                Text(
-                    text = "Hi ${profileViewModel.username.collectAsState().value}",
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.jua)),
-                    color = Color(0xFFD7C4EC),
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                )
-
-            }
-
-            Button(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 200.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD7C4EC)),
-                onClick = {
-                    profileViewModel.logoutUser(token, navController)
-                },
-            ) {
-                Text(
-                    text = "logout",
-                    fontFamily = FontFamily(Font(R.font.jua)),
-                    fontSize = 20.sp
+                    .size(400.dp)
+                    .align(Alignment.TopEnd)
+                    .offset(x = 85.dp, y = 115.dp)
+                    .graphicsLayer(
+                        rotationZ = 23f, // Tlit
+                        alpha = 0.2f     // transparancy
                     )
+            )
+
+            // bg Flower image top start
+            Image(
+                painter = painterResource(R.drawable.sketchy_flower),
+                contentDescription = "flower",
+                modifier = Modifier
+                    .size(400.dp)
+                    .align(Alignment.TopStart)
+                    .offset(x = -150.dp, y = -90.dp)
+                    .graphicsLayer(
+                        alpha = 0.3f
+                    )
+                    .padding(16.dp)
+            )
+            // bg Flower image top end
+            Image(
+                painter = painterResource(R.drawable.sketchy_flower),
+                contentDescription = "flower",
+                modifier = Modifier
+                    .size(400.dp)
+                    .align(Alignment.TopStart)
+                    .offset(x = 150.dp, y = -110.dp)
+                    .graphicsLayer(
+                        alpha = 0.3f
+                    )
+                    .padding(16.dp)
+            )
+            // bg Flower image bottom end
+            Image(
+                painter = painterResource(R.drawable.sketchy_flower),
+                contentDescription = "flower",
+                modifier = Modifier
+                    .size(250.dp)
+                    .align(Alignment.BottomEnd)
+                    .offset(x = 85.dp, y = -100.dp)
+                    .graphicsLayer(
+                        alpha = 0.3f
+                    )
+                    .padding(16.dp)
+            )
+            // bg Flower image bottom start
+            Image(
+                painter = painterResource(R.drawable.sketchy_flower),
+                contentDescription = "flower",
+                modifier = Modifier
+                    .size(400.dp)
+                    .align(Alignment.BottomStart)
+                    .offset(x = -140.dp, y = -20.dp)
+                    .graphicsLayer(
+                        alpha = 0.3f
+                    )
+                    .padding(16.dp)
+            )
+
+            
+            // Profile
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 100.dp)
+                    .padding(horizontal = 20.dp),
+            ) {
+                // Title
+                Text(
+                    text = "Profile",
+                    fontSize = 40.sp,
+                    color = Color(0xFF5E4890),
+                    fontFamily = FontFamily(Font(R.font.jua)),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .align(Alignment.CenterHorizontally)
+                        .background(Color(0xFFD7C4EC))
+                        .padding(20.dp)
+                )
+                Column {
+                    Text(
+                        text = "Hi ${profileViewModel.username.collectAsState().value}",
+                        fontSize = 40.sp,
+                        fontFamily = FontFamily(Font(R.font.jua)),
+                        color = Color(0xFFD7C4EC),
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                    )
+
+                }
+
+                Button(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 200.dp)
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD7C4EC)),
+                    onClick = {
+                        profileViewModel.logoutUser(token, navController)
+                    },
+                ) {
+                    Text(
+                        text = "logout",
+                        fontFamily = FontFamily(Font(R.font.jua)),
+                        fontSize = 32.sp,
+                        color = Color(0xFF5E4890)
+                    )
+                }
             }
         }
+
     }
 
 }
