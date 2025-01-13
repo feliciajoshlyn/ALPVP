@@ -44,9 +44,11 @@ import com.feliii.alpvp.view.register
 import com.feliii.alpvp.viewmodel.AuthenticationViewModel
 import com.feliii.alpvp.viewmodel.CalendarDetailViewModel
 import com.feliii.alpvp.viewmodel.CalendarViewModel
+import com.feliii.alpvp.viewmodel.CookieClickerViewModel
 import com.feliii.alpvp.viewmodel.FidgetSpinnerViewModel
 import com.feliii.alpvp.viewmodel.HomeViewModel
 import com.feliii.alpvp.viewmodel.ProfileViewModel
+import com.feliii.alpvp.view.CookieClicker
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -57,6 +59,7 @@ fun RelaxGameApp(
     authenticationViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory),
     wamViewModel: WAMViewModel = viewModel(factory = WAMViewModel.Factory),
     fsViewModel: FidgetSpinnerViewModel = viewModel(factory = FidgetSpinnerViewModel.Factory),
+    cookieClickerViewModel: CookieClickerViewModel = viewModel(factory = CookieClickerViewModel.Factory),
     calendarViewModel: CalendarViewModel = viewModel(factory = CalendarViewModel.Factory),
     calendarDetailViewModel: CalendarDetailViewModel = viewModel(factory = CalendarDetailViewModel.Factory)
 ){
@@ -190,10 +193,21 @@ fun RelaxGameApp(
 
         composable(route = PagesEnum.FidgetSpinner.name) {
             FidgetSpinner(
+                token = token.value,
+                context = localContext,
                 navController = navController,
                 fsViewModel = fsViewModel
             )
         }
+
+        composable(route = PagesEnum.CookieClicker.name) {
+            CookieClicker(
+                navController = navController,
+                viewModel = CookieClickerViewModel() // Pass an instance of CookieClickerViewModel
+            )
+        }
+
+
 
         composable(route = PagesEnum.Calendar.name) {
             Scaffold(

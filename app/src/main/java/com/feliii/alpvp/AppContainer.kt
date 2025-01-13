@@ -4,16 +4,19 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.feliii.alpvp.repository.AuthenticationRepository
 import com.feliii.alpvp.repository.CalendarRepository
+import com.feliii.alpvp.repository.CookieClickerRepository
 import com.feliii.alpvp.repository.FSRepository
 import com.feliii.alpvp.repository.UserRepository
 import com.feliii.alpvp.repository.NetworkAuthenticationRepository
 import com.feliii.alpvp.repository.NetworkCalendarRepository
+import com.feliii.alpvp.repository.NetworkCookieClickerRepository
 import com.feliii.alpvp.repository.NetworkFSSettingRepository
 import com.feliii.alpvp.repository.NetworkUserRepository
 import com.feliii.alpvp.repository.NetworkWAMRepository
 import com.feliii.alpvp.repository.WAMRepository
 import com.feliii.alpvp.service.AuthenticationAPIService
 import com.feliii.alpvp.service.CalendarAPIService
+import com.feliii.alpvp.service.CookieClickerAPIService
 import com.feliii.alpvp.service.FSAPIService
 import com.feliii.alpvp.service.UserAPIService
 import com.feliii.alpvp.service.WAMAPIService
@@ -30,12 +33,12 @@ interface AppContainer {
     val wamRepository: WAMRepository
     val calendarRepository: CalendarRepository
     val fsRepository: FSRepository
+    val cookieClickerRepository: CookieClickerRepository
 }
 
 class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : AppContainer {
-//    private val APIBaseURL = "http://192.168.1.3:3000/" //isi ip wifi
-    private val APIBaseURL = "http://10.0.2.2:3000/"
-//    private val APIBaseURL = "http:/192.168.1.7:3000/" //isi ip wifi
+    private val APIBaseURL = "http://10.0.2.2:3000/" //isi ip wifi
+//    private val APIBaseURL = "http://10.0.2.2:3000/"
 
 //    val ipAddress = getDeviceIPAddress()
 //    private val APIBaseURL = "http://$ipAddress:3000/"
@@ -70,6 +73,12 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
         retrofit.create(FSAPIService::class.java)
     }
 
+    private val cookieClickerRetrofitService: CookieClickerAPIService by lazy {
+        val retrofit = initRetrofit()
+
+        retrofit.create(CookieClickerAPIService::class.java)
+    }
+
     override val authenticationRepository: AuthenticationRepository by lazy {
         NetworkAuthenticationRepository(authenticationRetrofitService)
     }
@@ -87,6 +96,10 @@ class DefaultAppContainer(private val userDataStore: DataStore<Preferences>) : A
 
     override val fsRepository: FSRepository by lazy {
         NetworkFSSettingRepository(fsRetrofitService)
+    }
+
+    override val cookieClickerRepository: CookieClickerRepository by lazy {
+        NetworkCookieClickerRepository(cookieClickerRetrofitService)
     }
 
     //to initialize retrofit
