@@ -167,17 +167,14 @@ fun mainMenu(
                         Column (
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clip(RoundedCornerShape(20.dp))
-                                .background(Color(0xFFD7C4EC))
-                                .padding(20.dp)
+                            modifier = Modifier
                                 .clickable {
                                     // sementara ke WAM
-                                    navController.navigate(PagesEnum.WhackAMoleMenu) {
-                                        popUpTo(PagesEnum.WhackAMoleMenu.name) {
-                                            inclusive = true
-                                        }
-                                    }
+                                    homeViewModel.getWAMData(token, navController)
                                 }
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFFD7C4EC))
+                                .padding(20.dp)
                         ){
                             Image(
                                 painter = painterResource(R.drawable.cookie_logo),
@@ -199,18 +196,14 @@ fun mainMenu(
                         Column (
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clip(RoundedCornerShape(20.dp))
+                            modifier = Modifier
+                                .clickable {
+                                    // sementara ke WAM
+                                    homeViewModel.getWAMData(token, navController)
+                                }
+                                .clip(RoundedCornerShape(20.dp))
                                 .background(Color(0xFFD7C4EC))
                                 .padding(20.dp)
-                                .clickable {
-//                                    // sementara ke WAM
-//                                    navController.navigate(PagesEnum.WhackAMoleMenu) {
-//                                        popUpTo(PagesEnum.WhackAMoleMenu.name) {
-//                                            inclusive = true
-//                                        }
-//                                    }
-                                    homeViewModel.logoutUser(token, navController)
-                                }
                         ){
                             Image(
                                 painter = painterResource(R.drawable.leaf_fall_logo),

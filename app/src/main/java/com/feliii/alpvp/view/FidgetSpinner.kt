@@ -278,10 +278,12 @@ fun FidgetSpinner(
                                 text = if (fsViewModel.boolIsPlaying) "🔇" else "🔊",
                                 color = Color.White,
                                 fontSize = 16.sp,
-                                modifier = Modifier.background(
-                                    color = Color(0xFFB39DDB), // Lighter purple background
-                                    shape = RoundedCornerShape(20.dp)
-                                )
+                                modifier = Modifier
+                                    .clickable { fsViewModel.skipSong(context) }
+                                    .background(
+                                        color = Color(0xFFB39DDB), // Lighter purple background
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
                                     .padding(horizontal = 28.dp, vertical = 2.dp)
                                     .clickable { fsViewModel.onToggleSong() }
                             )
@@ -292,12 +294,13 @@ fun FidgetSpinner(
                                 text = "⏭",
                                 color = Color.White,
                                 fontSize = 16.sp,
-                                modifier = Modifier.background(
-                                    color = Color(0xFFB39DDB), // Lighter purple background
-                                    shape = RoundedCornerShape(20.dp)
-                                )
-                                    .padding(horizontal = 28.dp, vertical = 2.dp)
+                                modifier = Modifier
                                     .clickable { fsViewModel.skipSong(context) }
+                                    .background(
+                                        color = Color(0xFFB39DDB), // Lighter purple background
+                                        shape = RoundedCornerShape(20.dp)
+                                    )
+                                    .padding(horizontal = 28.dp, vertical = 2.dp)
                             )
                         }
 
